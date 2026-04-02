@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BOM Dashboard — WhatsApp Analyzer</title>
+<style>
+/* ═══════════════════════════════════════════════════
+   DESIGN TOKENS — exact match with main.html
+═══════════════════════════════════════════════════ */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg0:#07101e;--bg1:#0d1929;--bg2:#132436;--bg3:#1c3352;
+  --border:#1e3a5f;--border-hover:#2a5a8a;
+  --accent:#25D366;--accent-dim:rgba(37,211,102,0.12);--accent-mid:rgba(37,211,102,0.25);
+  --text:#d8edf5;--text-sub:#6b90aa;--text-dim:#3a607a;
+  --gold:#f5c542;--silver:#a8b8c4;--bronze:#c97c3a;
+  --red:#ef4444;--fire1:#ff6b35;--fire2:#f7c59f;
+}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--bg0);color:var(--text);min-height:100vh;
+  overflow-x:hidden;font-size:14px;line-height:1.5
+}
+button{font-family:inherit;cursor:pointer}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg1)}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+
+/* ── Layout ── */
+.dashboard{display:flex;min-height:100vh}
+
+/* ── Sidebar ── */
+.sidebar{
+  width:238px;min-height:100vh;background:var(--bg1);
+  border-right:1px solid var(--border);display:flex;
+  flex-direction:column;flex-shrink:0;position:sticky;
+  top:0;height:100vh;overflow-y:auto;transition:transform .25s
+}
+.sidebar-logo{padding:20px 18px 14px;border-bottom:1px solid var(--border)}
+.sidebar-logo-row{display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.sidebar-logo-icon{
+  width:30px;height:30px;background:var(--accent-dim);
+  border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px
+}
+.sidebar-logo-name{font-weight:900;font-size:15px;color:var(--text)}
+.sidebar-logo-name span{color:var(--accent)}
+.sidebar-meta{font-size:11px;color:var(--text-dim);padding-left:39px;font-weight:600}
+.sidebar-nav{padding:10px;flex:1}
+.nav-btn{
+  width:100%;display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;border:none;
+  text-align:left;font-size:13.5px;font-weight:600;
+  transition:all .15s;margin-bottom:3px;
+  background:transparent;color:var(--text-sub);text-decoration:none
+}
+.nav-btn:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.nav-btn.active{background:var(--accent-dim);color:var(--accent)}
+.nav-btn.disabled-nav{opacity:.45;pointer-events:none}
+.nav-btn-icon{font-size:16px;width:20px;text-align:center}
+.nav-badge-fire{
+  margin-left:auto;font-size:9px;padding:2px 6px;
+  background:linear-gradient(135deg,var(--fire1),var(--fire2));
+  color:#000;border-radius:4px;font-weight:800
+}
+.sidebar-footer{padding:12px 10px;border-top:1px solid var(--border)}
+.btn-back-main{
+  width:100%;padding:9px 14px;border-radius:9px;font-size:13px;
+  font-weight:700;border:1px solid var(--border);
+  background:transparent;color:var(--text-sub);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  transition:all .15s;text-decoration:none
+}
+.btn-back-main:hover{background:rgba(255,255,255,.04);color:var(--text)}
+
+/* ── Main content ── */
+.main-content{flex:1;overflow-y:auto;min-width:0}
+.page{padding:28px 32px;max-width:1200px}
+
+/* ── Page header ── */
+.page-header{margin-bottom:24px}
+.page-title{font-size:22px;font-weight:900;color:var(--text);letter-spacing:-.3px;margin-bottom:4px}
+.page-sub{color:var(--text-sub);font-size:14px}
+
+/* ── Stats grid ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:26px}
+.stat-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:14px;padding:18px 20px;
+  position:relative;overflow:hidden;transition:border-color .15s
+}
+.stat-card:hover{border-color:var(--border-hover)}
+.stat-glow{
+  position:absolute;top:-20px;right:-20px;width:70px;height:70px;
+  border-radius:50%;filter:blur(18px);pointer-events:none
+}
+.stat-label{
+  font-size:11px;font-weight:700;color:var(--text-sub);
+  text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px
+}
+.stat-value{font-size:26px;font-weight:900;color:var(--text);line-height:1;margin-bottom:2px}
+.stat-sub{font-size:11px;color:var(--text-sub);margin-top:4px}
+.stat-icon{position:absolute;bottom:14px;right:14px;font-size:20px;opacity:.4}
+
+/* ── Chart / content cards ── */
+.chart-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:16px;padding:20px;margin-bottom:20px
+}
+.chart-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.chart-sub{font-size:12px;color:var(--text-sub);margin-bottom:16px}
+
+/* ── BOM Leaderboard rows ── */
+.bom-lb-card{
+  background:var(--bg1);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;margin-bottom:16px
+}
+.bom-lb-header-row{
+  display:grid;grid-template-columns:44px 1fr auto;
+  align-items:center;gap:12px;
+  padding:13px 20px;border-bottom:1px solid var(--border);
+  background:var(--bg2)
+}
+.bom-lb-header-row span{
+  font-size:11px;font-weight:700;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.08em
+}
+.bom-lb-row{
+  display:grid;grid-template-columns:44px 1fr auto;
+  align-items:center;gap:12px;
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  transition:background .12s
+}
+.bom-lb-row:last-child{border-bottom:none}
+.bom-lb-row:hover{background:var(--bg2)}
+.bom-lb-rank-cell{font-size:22px;text-align:center}
+.bom-lb-info{min-width:0}
+.bom-lb-year{font-size:17px;font-weight:900;color:var(--text);margin-bottom:5px}
+.bom-lb-members{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.bom-lb-member-tag{
+  padding:2px 9px;background:var(--bg3);border-radius:10px;
+  font-size:11px;font-weight:700;color:var(--text-sub)
+}
+.bom-lb-bar-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;max-width:320px}
+.bom-lb-bar-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--accent),#00e5ff);
+  transition:width .65s cubic-bezier(.23,1,.32,1)
+}
+.bom-score-cell{text-align:right;flex-shrink:0}
+.bom-score-num{font-size:24px;font-weight:900;color:var(--text)}
+.bom-score-label{font-size:11px;color:var(--text-sub);margin-top:1px}
+.bom-score-bonus{font-size:11px;color:var(--accent);margin-top:2px;font-weight:700}
+
+/* ── Daily leaderboard ── */
+.bom-daily-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:var(--bg2);
+  border:1px solid var(--border);border-radius:11px;margin-bottom:8px;
+  transition:border-color .15s
+}
+.bom-daily-row:hover{border-color:var(--border-hover)}
+.bom-daily-rank{font-size:16px;min-width:28px;text-align:center}
+.bom-daily-year{font-size:14px;font-weight:800;color:var(--accent)}
+.bom-daily-bar-wrap{flex:1;min-width:0}
+.bom-daily-bar-track{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden;margin-top:5px}
+.bom-daily-bar-fill{height:100%;background:linear-gradient(90deg,var(--accent),#00e5ff);border-radius:2px;transition:width .5s ease}
+.bom-daily-score{
+  margin-left:auto;font-size:13px;font-weight:800;color:var(--text);
+  background:var(--bg3);padding:4px 12px;border-radius:8px;white-space:nowrap
+}
+
+/* ── BOM Squad badge ── */
+.bom-squad-card{
+  background:linear-gradient(135deg,rgba(255,107,53,.08),rgba(247,197,159,.06));
+  border:1px solid rgba(255,107,53,.35);border-radius:14px;
+  padding:18px 20px;margin-bottom:20px
+}
+.bom-squad-title{font-size:15px;font-weight:800;color:#ffa07a;margin-bottom:4px}
+.bom-squad-sub{font-size:12px;color:var(--text-sub);margin-bottom:14px}
+.bom-squad-members{display:flex;flex-wrap:wrap;gap:8px}
+.bom-squad-tag{
+  padding:5px 14px;
+  background:linear-gradient(135deg,rgba(255,107,53,.18),rgba(247,197,159,.12));
+  border:1px solid rgba(255,107,53,.4);border-radius:20px;
+  font-size:12px;font-weight:800;color:#ffa07a
+}
+
+/* ── Rules card ── */
+.bom-rule-item{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:9px 0;border-bottom:1px solid var(--border)
+}
+.bom-rule-item:last-child{border-bottom:none}
+.bom-rule-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.bom-rule-text{font-size:13px;color:var(--text-sub);line-height:1.5}
+.bom-rule-text strong{color:var(--text)}
+
+/* ── Empty / error state ── */
+.empty-state{
+  text-align:center;padding:80px 24px;
+  display:flex;flex-direction:column;align-items:center;gap:14px
+}
+.empty-icon{font-size:52px}
+.empty-title{font-size:18px;font-weight:800;color:var(--text)}
+.empty-sub{font-size:14px;color:var(--text-sub);max-width:360px;line-height:1.6}
+.btn-goto{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:11px 26px;background:var(--accent);color:#000;
+  border-radius:11px;font-weight:800;font-size:14px;
+  border:none;text-decoration:none;transition:all .15s;margin-top:4px
+}
+.btn-goto:hover{background:#1db855;transform:translateY(-1px)}
+
+/* ── Accent tag / highlight ── */
+.accent-tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;background:var(--accent-dim);
+  border:1px solid rgba(37,211,102,.3);border-radius:10px;
+  font-size:11px;font-weight:800;color:var(--accent)
+}
+
+/* ── Two column grid ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+
+/* ── Loading spinner ── */
+.loader{
+  display:flex;align-items:center;justify-content:center;
+  padding:60px 24px;gap:10px;color:var(--text-sub);font-size:14px
+}
+.spinner{
+  width:20px;height:20px;border:2px solid var(--border);
+  border-top-color:var(--accent);border-radius:50%;
+  animation:spin .7s linear infinite;flex-shrink:0
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Divider label ── */
+.section-label{
+  font-size:11px;font-weight:700;color:var(--text-dim);
+  text-transform:uppercase;letter-spacing:.1em;
+  padding:4px 12px 8px;
+}
+
+/* ── Mobile hamburger ── */
+.hamburger{
+  display:none;position:fixed;top:14px;left:14px;z-index:100;
+  width:38px;height:38px;background:var(--bg2);
+  border:1px solid var(--border);border-radius:9px;
+  align-items:center;justify-content:center;font-size:18px;border:none
+}
+.mobile-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:90}
+
+@media(max-width:768px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;z-index:95;transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main-content{padding-top:60px}
+  .hamburger{display:flex}
+  .mobile-overlay.open{display:block}
+  .page{padding:20px 16px}
+  .two-col{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .bom-lb-header-row,.bom-lb-row{grid-template-columns:36px 1fr auto}
+}
+@media(max-width:480px){
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Hamburger -->
+<button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
+<div class="dashboard">
+
+  <!-- ════════════════════════════
+       SIDEBAR
+  ════════════════════════════ -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-row">
+        <div class="sidebar-logo-icon">💬</div>
+        <div class="sidebar-logo-name">WA<span>Analyzer</span></div>
+      </div>
+      <div class="sidebar-meta">GROUP INSIGHTS</div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="section-label">Navigation</div>
+
+      <!-- Overview → link back to main app -->
+      <a class="nav-btn" href="main.html" title="Back to main app">
+        <span class="nav-btn-icon">📊</span>
+        Overview
+      </a>
+
+      <!-- Leaderboard (disabled – belongs to main.html) -->
+      <button class="nav-btn disabled-nav" disabled>
+        <span class="nav-btn-icon">🏅</span>
+        Leaderboard
+      </button>
+
+      <!-- BOM – active page -->
+      <button class="nav-btn active" onclick="">
+        <span class="nav-btn-icon">🔥</span>
+        BOM
+        <span class="nav-badge-fire">LIVE</span>
+      </button>
+    </div>
+
+    <div class="sidebar-footer">
+      <a class="btn-back-main" href="main.html">← Back to Main App</a>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════
+       MAIN CONTENT
+  ════════════════════════════ -->
+  <div class="main-content">
+    <div class="page" id="root">
+      <div class="loader"><div class="spinner"></div> Loading BOM data…</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════
+
+/** Spam patterns — mirror of main.html BOM_BAD_MAIN */
+const SPAM_RE = /^(good\s*morning|good\s*night|gm\b|gn\b|goodnight|goodmorning|good\s*eve|jai\s*shri|jai\s*hind|happy\s*\w+|congrat|\bhi\b|\bhey\b|\bhello\b|\bokay\b|\bok\b|\byes\b|\bno\b|\bhmm\b|\bhaha\b|\blol\b|🙏+|👍+)/i;
+
+/** System-message patterns to skip */
+const SYS_RE = [
+  /end-to-end encrypted/i,/changed the subject/i,/changed this group/i,
+  /changed the group/i,/added you/i,/added \+/i,/\bleft\b/i,
+  /removed you/i,/created group/i,/changed their phone/i,/group icon/i,
+  /joined using this group/i,/invite link/i,/<media omitted>/i,
+  /media omitted/i,/this message was deleted/i,/you deleted this message/i,
+  /security code/i,/missed.*call/i,/pinned a message/i,
+  /you were added/i,/was added/i,/messages to this group/i,
+];
+
+/** Consistency-bonus thresholds */
+const BONUS_20 = 50;
+const BONUS_10 = 20;
+
+/** Regex to extract 4-digit year from a sender name */
+const YEAR_RE = /\b(20\d{2})\b/;
+
+// Medal labels
+const MEDALS = ['🥇','🥈','🥉'];
+
+// Today's date string (YYYY-MM-DD)
+function todayDS() {
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 1 — LOAD DATA FROM LOCALSTORAGE
+// ═══════════════════════════════════════════════════
+function loadRawMessages() {
+  try {
+    const raw = localStorage.getItem('wa_data');
+    if (!raw) return null;
+    return JSON.parse(raw); // array of message objects
+  } catch(e) {
+    return null;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 2 — PRECOMPUTE VALID BOM MESSAGES (ONCE)
+//  Rules: 6 AM–10 PM | length > 3 | no spam | April 1+
+// ═══════════════════════════════════════════════════
+function precomputeValid(messages) {
+  const aprilCutoff = new Date(new Date().getFullYear(), 3, 1); // April 1 current year
+
+  return messages.filter(msg => {
+    const hour = typeof msg.hour === 'number' ? msg.hour : parseInt(msg.hour);
+    if (hour < 6 || hour >= 22) return false;
+    if (!msg.content || msg.content.length <= 3) return false;
+    if (SPAM_RE.test(msg.content.trim())) return false;
+    if (SYS_RE.some(p => p.test(msg.content))) return false;
+
+    // Date check — April 1 onwards
+    const ts = msg.timestamp || msg.dateStr;
+    if (!ts) return false;
+    const msgDate = new Date(typeof ts === 'number' ? ts : msg.dateStr);
+    if (isNaN(msgDate)) return false;
+    if (msgDate < aprilCutoff) return false;
+
+    return true;
+  });
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 3 — AUTO BATCH DETECTION
+//  Extract year via YEAR_RE, group ≤3 members each,
+//  ignore year 2025 (BOM Squad, handled separately).
+// ═══════════════════════════════════════════════════
+function detectBatches(validMessages) {
+  // Collect all distinct senders from valid messages
+  const senderSet = new Set(validMessages.map(m => m.sender));
+
+  const batches   = {}; // year → Set of members
+  const squad2025 = new Set();
+
+  for (const sender of senderSet) {
+    const match = YEAR_RE.exec(sender);
+    if (!match) continue;
+    const year = match[1];
+
+    if (year === '2025') {
+      squad2025.add(sender);
+      continue;
+    }
+
+    if (!batches[year]) batches[year] = new Set();
+    if (batches[year].size < 3) batches[year].add(sender); // max 3 per batch
+  }
+
+  // Convert Sets → sorted arrays
+  const result = {};
+  for (const [yr, members] of Object.entries(batches)) {
+    result[yr] = [...members].sort();
+  }
+  return { batches: result, squad: [...squad2025].sort() };
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 4 — COMPUTE BOM SCORES (SINGLE PASS)
+//  For each batch: count messages, active days, bonus.
+// ═══════════════════════════════════════════════════
+function computeScores(validMessages, batches) {
+  // Build sender→batch map for O(1) lookup
+  const senderBatch = {};
+  for (const [year, members] of Object.entries(batches)) {
+    for (const m of members) senderBatch[m] = year;
+  }
+
+  // Accumulators: { year: { msgs, activeDays: Set } }
+  const acc = {};
+  for (const year of Object.keys(batches)) {
+    acc[year] = { msgs: 0, activeDays: new Set() };
+  }
+
+  // Single pass over valid messages
+  for (const msg of validMessages) {
+    const year = senderBatch[msg.sender];
+    if (!year) continue;
+    acc[year].msgs++;
+    acc[year].activeDays.add(msg.dateStr || msg.timestamp?.toString()?.slice(0,10));
+  }
+
+  // Build scored array
+  const scores = Object.entries(acc).map(([year, data]) => {
+    const days   = data.activeDays.size;
+    let bonus    = 0;
+    if (days > 20) bonus = BONUS_20;
+    else if (days > 10) bonus = BONUS_10;
+    const total  = data.msgs + bonus;
+
+    return {
+      year,
+      members: batches[year],
+      msgs: data.msgs,
+      activeDays: days,
+      bonus,
+      total,
+    };
+  });
+
+  // Sort descending by total score
+  scores.sort((a, b) => b.total - a.total);
+  return scores;
+}
+
+// ═══════════════════════════════════════════════════
+//  STEP 5 — TODAY'S DAILY LEADERBOARD (OPTIMISED)
+//  Only checks messages from today — no full history.
+// ═══════════════════════════════════════════════════
+function computeToday(validMessages, batches) {
+  const today = todayDS();
+
+  const senderBatch = {};
+  for (const [year, members] of Object.entries(batches)) {
+    for (const m of members) senderBatch[m] = year;
+  }
+
+  const todayAcc = {};
+  for (const year of Object.keys(batches)) todayAcc[year] = 0;
+
+  for (const msg of validMessages) {
+    const ds = msg.dateStr || (msg.timestamp ? new Date(msg.timestamp).toISOString().slice(0,10) : null);
+    if (ds !== today) continue;
+    const year = senderBatch[msg.sender];
+    if (!year) continue;
+    todayAcc[year]++;
+  }
+
+  return Object.entries(todayAcc)
+    .map(([year, pts]) => ({ year, pts }))
+    .sort((a, b) => b.pts - a.pts);
+}
+
+// ═══════════════════════════════════════════════════
+//  HELPERS
+// ═══════════════════════════════════════════════════
+function esc(s) {
+  return String(s)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function medal(rank) {
+  return MEDALS[rank] || `<span style="font-size:13px;font-weight:700;color:var(--text-sub)">#${rank+1}</span>`;
+}
+
+// Gradient glow colours for stat cards
+const GLOW_COLORS = [
+  'rgba(37,211,102,.25)',
+  'rgba(0,180,216,.25)',
+  'rgba(245,197,66,.22)',
+  'rgba(255,107,53,.22)',
+];
+
+// ═══════════════════════════════════════════════════
+//  RENDER — NO DATA STATE
+// ═══════════════════════════════════════════════════
+function renderNoData() {
+  document.getElementById('root').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-title">No Chat Data Found</div>
+      <div class="empty-sub">
+        Please upload your WhatsApp chat export in the main app first.
+        The BOM dashboard reads data saved there.
+      </div>
+      <a class="btn-goto" href="main.html">← Open Main App</a>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER — FULL DASHBOARD
+// ═══════════════════════════════════════════════════
+function renderDashboard(scores, todayData, squad, validCount, batchCount) {
+  const topBatch    = scores[0];
+  const topToday    = todayData[0];
+  const maxScore    = topBatch ? topBatch.total : 1;
+  const maxToday    = topToday ? topToday.pts  : 1;
+
+  /* ── Stat Cards ── */
+  const statsHTML = `
+    <div class="stats-grid">
+      ${statCard('Total Batches', batchCount, '🏅', GLOW_COLORS[0],
+          `${squad.length ? `+1 BOM Squad` : 'competing batches'}`)}
+      ${statCard('Valid Messages', validCount.toLocaleString(), '💬', GLOW_COLORS[1],
+          'April onwards · 6 AM–10 PM')}
+      ${statCard("Today's Leader", topToday && topToday.pts > 0 ? `Batch ${topToday.year}` : '—',
+          '🔥', GLOW_COLORS[2],
+          topToday && topToday.pts > 0 ? `${topToday.pts} pts today` : 'No messages today')}
+      ${statCard('BOM Leader', topBatch ? `Batch ${topBatch.year}` : '—',
+          '👑', GLOW_COLORS[3],
+          topBatch ? `${topBatch.total} total pts` : 'No data')}
+    </div>`;
+
+  /* ── BOM Leaderboard ── */
+  const lbRowsHTML = scores.length === 0
+    ? `<div style="padding:40px;text-align:center;color:var(--text-sub)">No batch data found.</div>`
+    : scores.map((s, i) => {
+        const barPct = Math.round((s.total / maxScore) * 100);
+        const bonusTag = s.bonus > 0
+          ? `<div class="bom-score-bonus">+${s.bonus} consistency</div>` : '';
+        return `
+          <div class="bom-lb-row">
+            <div class="bom-lb-rank-cell">${medal(i)}</div>
+            <div class="bom-lb-info">
+              <div class="bom-lb-year">Batch ${esc(s.year)}</div>
+              <div class="bom-lb-members">
+                ${s.members.map(m => `<span class="bom-lb-member-tag">${esc(m)}</span>`).join('')}
+              </div>
+              <div class="bom-lb-bar-track">
+                <div class="bom-lb-bar-fill" style="width:${barPct}%"></div>
+              </div>
+            </div>
+            <div class="bom-score-cell">
+              <div class="bom-score-num">${s.total}</div>
+              <div class="bom-score-label">${s.msgs} msgs · ${s.activeDays} days</div>
+              ${bonusTag}
+            </div>
+          </div>`;
+      }).join('');
+
+  const leaderboardHTML = `
+    <div class="chart-card">
+      <div class="chart-title">🏆 BOM Leaderboard</div>
+      <div class="chart-sub">Ranked by total points (messages + consistency bonus) · April 1 onwards</div>
+      <div class="bom-lb-card">
+        <div class="bom-lb-header-row">
+          <span>Rank</span>
+          <span>Batch</span>
+          <span>Score</span>
+        </div>
+        ${lbRowsHTML}
+      </div>
+    </div>`;
+
+  /* ── Today's Leaderboard ── */
+  const todayRows = todayData.filter(d => d.pts > 0);
+  const todayHTML = `
+    <div class="chart-card">
+      <div class="chart-title">📅 Today's Leaderboard</div>
+      <div class="chart-sub">${new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'})} — live standings</div>
+      ${todayRows.length === 0
+        ? `<div style="text-align:center;padding:32px;color:var(--text-sub);font-size:13px">
+             No qualifying messages yet today. Check back after 6 AM! ⏰
+           </div>`
+        : todayRows.map((d, i) => {
+            const pct = Math.round((d.pts / maxToday) * 100);
+            return `
+              <div class="bom-daily-row">
+                <div class="bom-daily-rank">${medal(i)}</div>
+                <div class="bom-daily-bar-wrap">
+                  <div class="bom-daily-year">Batch ${esc(d.year)}</div>
+                  <div class="bom-daily-bar-track">
+                    <div class="bom-daily-bar-fill" style="width:${pct}%"></div>
+                  </div>
+                </div>
+                <div class="bom-daily-score">${d.pts} pts</div>
+              </div>`;
+          }).join('')}
+    </div>`;
+
+  /* ── BOM Squad (2025) ── */
+  const squadHTML = squad.length > 0 ? `
+    <div class="bom-squad-card">
+      <div class="bom-squad-title">👑 BOM Squad (Judges)</div>
+      <div class="bom-squad-sub">Batch 2025 is not included in the competition — they are the organisers.</div>
+      <div class="bom-squad-members">
+        ${squad.map(m => `<span class="bom-squad-tag">${esc(m)}</span>`).join('')}
+      </div>
+    </div>` : '';
+
+  /* ── Rules Card ── */
+  const rulesHTML = `
+    <div class="chart-card">
+      <div class="chart-title">📜 BOM Scoring Rules</div>
+      <div class="chart-sub">How points are calculated each month</div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">⏰</span>
+        <div class="bom-rule-text"><strong>Time window</strong> — Only messages sent between <strong>6 AM and 10 PM</strong> count.</div>
+      </div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">📅</span>
+        <div class="bom-rule-text"><strong>Date range</strong> — Only messages from <strong>April 1</strong> onwards are counted.</div>
+      </div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">✍️</span>
+        <div class="bom-rule-text"><strong>Message quality</strong> — Must be longer than 3 characters. Greetings, spam, and system messages are excluded.</div>
+      </div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">👥</span>
+        <div class="bom-rule-text"><strong>Batch size</strong> — Max <strong>3 members</strong> per batch. Batches are auto-detected from sender names (e.g. <em>2006_1</em>).</div>
+      </div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">🔥</span>
+        <div class="bom-rule-text"><strong>Consistency bonus</strong> — Active &gt; 20 days → <strong>+${BONUS_20} pts</strong>. Active &gt; 10 days → <strong>+${BONUS_10} pts</strong>.</div>
+      </div>
+      <div class="bom-rule-item">
+        <span class="bom-rule-icon">👑</span>
+        <div class="bom-rule-text"><strong>BOM Squad (2025)</strong> — Judges / organisers. Not included in the competition leaderboard.</div>
+      </div>
+    </div>`;
+
+  /* ── Assemble page ── */
+  document.getElementById('root').innerHTML = `
+    <div class="page-header">
+      <div class="page-title">🔥 Batch Of Month</div>
+      <div class="page-sub">Batch vs Batch Competition — auto-computed from chat data</div>
+    </div>
+
+    ${statsHTML}
+    ${squadHTML}
+
+    <div class="two-col">
+      ${leaderboardHTML}
+      <div>
+        ${todayHTML}
+        ${rulesHTML}
+      </div>
+    </div>`;
+
+  // Animate progress bars after a tick so CSS transitions fire
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.bom-lb-bar-fill,.bom-daily-bar-fill').forEach(el => {
+      const w = el.style.width;
+      el.style.width = '0';
+      requestAnimationFrame(() => { el.style.width = w; });
+    });
+  });
+}
+
+// ── Stat card HTML helper ──
+function statCard(label, value, icon, glow, sub) {
+  return `
+    <div class="stat-card">
+      <div class="stat-glow" style="background:${glow}"></div>
+      <div class="stat-label">${label}</div>
+      <div class="stat-value">${esc(String(value))}</div>
+      <div class="stat-sub">${sub}</div>
+      <div class="stat-icon">${icon}</div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+//  BOOT — runs once on page load
+// ═══════════════════════════════════════════════════
+(function boot() {
+  // 1. Load raw messages
+  const rawMessages = loadRawMessages();
+  if (!rawMessages || !Array.isArray(rawMessages) || rawMessages.length === 0) {
+    renderNoData();
+    return;
+  }
+
+  // 2. Precompute valid messages ONCE
+  const validMessages = precomputeValid(rawMessages);
+
+  // 3. Auto-detect batches
+  const { batches, squad } = detectBatches(validMessages);
+  const batchCount = Object.keys(batches).length;
+
+  if (batchCount === 0 && squad.length === 0) {
+    // No year-pattern senders found at all
+    document.getElementById('root').innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🤔</div>
+        <div class="empty-title">No Batch Members Detected</div>
+        <div class="empty-sub">
+          Sender names must contain a 4-digit year like <strong>2006_1</strong>, <strong>2007_2</strong>, etc.
+          None were found in the current chat data.
+        </div>
+        <a class="btn-goto" href="main.html">← Back to Main App</a>
+      </div>`;
+    return;
+  }
+
+  // 4. Compute overall BOM scores
+  const scores = computeScores(validMessages, batches);
+
+  // 5. Compute today's standings (today only — no full history)
+  const todayData = computeToday(validMessages, batches);
+
+  // 6. Render
+  renderDashboard(scores, todayData, squad, validMessages.length, batchCount);
+})();
+
+// ═══════════════════════════════════════════════════
+//  MOBILE SIDEBAR TOGGLE
+// ═══════════════════════════════════════════════════
+document.getElementById('hamburger').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('mobileOverlay').classList.toggle('open');
+});
+document.getElementById('mobileOverlay').addEventListener('click', () => {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobileOverlay').classList.remove('open');
+});
+</script>
+</body>
+</html>
