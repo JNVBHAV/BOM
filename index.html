@@ -815,12 +815,231 @@ body::before {
 .empty-state p { font-size: 14px; }
 
 /* ═══════════════════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — TABLET  (≤ 900px)
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* overview two-column grid → single column */
+  .overview-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detail-score-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 640px)
 ═══════════════════════════════════════════════ */
 @media (max-width: 640px) {
-  .bom-row { grid-template-columns: 40px 70px 1fr; }
-  .bom-score-btn { display: none; }
-  .page { padding: 24px 16px; }
+
+  /* ── Topbar ── */
+  #topbar {
+    padding: 0 12px;
+    gap: 8px;
+    height: 54px;
+  }
+
+  #topbar .brand { font-size: 16px; }
+
+  #nav-tabs { gap: 2px; }
+
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
+    min-height: 36px;
+  }
+
+  /* hide text label, keep emoji on very small screens */
+  @media (max-width: 380px) {
+    .nav-btn .nav-label { display: none; }
+  }
+
+  #file-status {
+    display: none; /* moves to page subtitle on mobile */
+  }
+
+  /* ── App shell ── */
+  #app { padding-top: 54px; }
+
+  .page {
+    padding: 16px 12px;
+  }
+
+  /* ── Upload page ── */
+  #upload-page { padding: 24px 16px; }
+
+  .upload-hero { font-size: clamp(32px, 10vw, 52px); }
+
+  .upload-sub {
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .upload-zone {
+    padding: 36px 20px;
+  }
+
+  .upload-icon { font-size: 40px; }
+
+  .upload-zone h3 { font-size: 18px; }
+
+  /* ── Page header ── */
+  .page-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-size: clamp(20px, 6vw, 28px);
+  }
+
+  .page-subtitle {
+    font-size: 12px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  /* ── Stats grid → 2 columns on phone ── */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card { padding: 14px 12px; }
+  .stat-icon { font-size: 18px; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+
+  /* ── Section cards ── */
+  .section-card {
+    padding: 16px 14px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+  }
+
+  .section-title { font-size: 15px; margin-bottom: 14px; }
+
+  /* ── Overview columns → single stack ── */
+  .overview-cols {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* ── Sender rows ── */
+  .sender-row { padding: 9px 10px; gap: 8px; }
+  .sender-name { font-size: 12px; }
+  .sender-count { font-size: 10px; }
+  .sender-bar-wrap { width: 64px; }
+  .sender-avatar { width: 30px; height: 30px; font-size: 12px; }
+
+  /* ── BOM leaderboard rows ── */
+  .bom-row {
+    /* stack: [rank + year] on one line, members below, score below */
+    grid-template-columns: 40px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 6px 10px;
+    padding: 12px 12px 12px 16px;
+  }
+
+  .bom-rank { font-size: 18px; }
+  .bom-rank.rn { font-size: 14px; }
+
+  .bom-year { font-size: 16px; }
+  .bom-year span { font-size: 10px; }
+
+  /* members row spans full width below rank+year */
+  .bom-members {
+    grid-column: 1 / -1;
+    gap: 3px;
+  }
+
+  .bom-member { font-size: 11px; }
+
+  /* score button: always visible on mobile, smaller */
+  .bom-score-btn {
+    display: block;
+    font-size: 16px;
+    padding: 6px 10px;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  /* ── Back button ── */
+  .back-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 44px;
+    margin-bottom: 16px;
+  }
+
+  /* ── Detail score panel → 2 col ── */
+  .detail-score-panel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .detail-score-card { padding: 14px 10px; }
+  .detail-score-card .dsc-icon { font-size: 20px; margin-bottom: 6px; }
+  .detail-score-card .dsc-value { font-size: 24px; }
+  .detail-score-card.total .dsc-value { font-size: 30px; }
+  .detail-score-card .dsc-label { font-size: 10px; }
+
+  /* ── View messages button ── */
+  .view-msgs-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+
+  /* ── Member table ── */
+  .member-table { font-size: 12px; }
+  .member-table th { padding: 8px 10px; font-size: 10px; }
+  .member-table td { padding: 9px 10px; }
+
+  /* ── Chat summary pills ── */
+  .chat-summary-bar { gap: 8px; }
+  .chat-stat-pill { font-size: 11px; padding: 6px 12px; }
+
+  /* ── Chat bubbles ── */
+  .chat-bubbles {
+    max-height: calc(100vh - 280px);
+    gap: 10px;
+  }
+
+  .bubble-avatar { width: 26px; height: 26px; font-size: 10px; }
+
+  .bubble {
+    max-width: 85%;          /* wider on small screens */
+    font-size: 13px;
+    padding: 8px 10px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .bubble-sender { font-size: 10px; }
+  .bubble-text { font-size: 13px; line-height: 1.45; }
+  .bubble-time { font-size: 9px; }
+  .bubble-tag { font-size: 8px; }
+
+  .bubble-meta { flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+
+  /* ── Hour chart ── */
+  .hour-chart { height: 64px; gap: 2px; }
+  .hour-label { font-size: 8px; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -841,8 +1060,8 @@ body::before {
   <div class="brand">📊 <span>WA</span>Analyzer</div>
 
   <div id="nav-tabs" style="display:none">
-    <button class="nav-btn active" onclick="showPage('overview')">📈 Overview</button>
-    <button class="nav-btn" onclick="openBOM()">🔥 BOM</button>
+    <button class="nav-btn active" onclick="showPage('overview')">📈 <span class="nav-label">Overview</span></button>
+    <button class="nav-btn" onclick="openBOM()">🔥 <span class="nav-label">BOM</span></button>
   </div>
 
   <span id="file-status">No file loaded</span>
@@ -879,7 +1098,7 @@ body::before {
     <!-- stats cards -->
     <div class="stats-grid" id="overview-stats"></div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex-wrap:wrap">
+    <div class="overview-cols" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
       <!-- top senders -->
       <div class="section-card">
         <div class="section-title">👥 Top Senders</div>
@@ -1513,8 +1732,8 @@ function renderChatPage() {
     <div class="chat-stat-pill invalid">❌ ${invalidCount.toLocaleString()} invalid</div>
   `;
 
-  // Render last 300 messages for performance
-  const toRender = marked.slice(-300);
+  // Render last 200 messages for performance (especially on mobile)
+  const toRender = marked.slice(-200);
   const colorMap = {};
   const palette  = ['var(--accent)','var(--accent2)','var(--purple)','#ff9f43','#ff6b6b','#48dbfb'];
   let ci = 0;
