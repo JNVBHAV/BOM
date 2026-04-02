@@ -20,6 +20,8 @@
             --accent-blue: #3b82f6;
             --accent-purple: #8b5cf6;
             --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --wa-green: #25D366;
             --text-primary: #f1f5f9;
             --text-secondary: #94a3b8;
             --text-muted: #64748b;
@@ -133,6 +135,7 @@
             flex: 1;
             margin-left: var(--sidebar-width);
             padding: 40px;
+            max-width: 1400px;
         }
 
         .page-header {
@@ -143,6 +146,9 @@
             font-size: 32px;
             font-weight: 700;
             margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .page-subtitle {
@@ -243,6 +249,7 @@
             justify-content: center;
             font-weight: 700;
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         .rank-1 { background: linear-gradient(135deg, #ffd700, #ffed4e); color: #000; }
@@ -269,10 +276,21 @@
             text-align: right;
         }
 
+        /* UPDATED: Clickable Score */
         .score-value {
             font-size: 28px;
             font-weight: 700;
             color: var(--accent-green);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 8px;
+            padding: 4px 12px;
+        }
+
+        .score-value:hover {
+            background: var(--accent-green);
+            color: var(--bg-primary);
+            transform: scale(1.05);
         }
 
         .score-label {
@@ -354,6 +372,7 @@
             margin-bottom: 24px;
         }
 
+        /* BUTTONS */
         .btn-primary {
             display: inline-block;
             padding: 12px 24px;
@@ -363,11 +382,248 @@
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
 
         .btn-primary:hover {
             background: #059669;
             transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-green);
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .btn-back:hover {
+            background: var(--bg-card);
+            border-color: var(--accent-green);
+        }
+
+        /* NEW: Breakdown Grid */
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .breakdown-item {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .breakdown-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .breakdown-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .breakdown-detail {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* NEW: Chat Explorer */
+        .chat-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 20px;
+        }
+
+        .chat-stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .chat-stat {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-stat-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .chat-stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .chat-stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .chat-messages {
+            padding: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .message-item {
+            margin-bottom: 16px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-primary);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 14px;
+            border-radius: 8px;
+            max-width: 80%;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message-valid {
+            background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(37, 211, 102, 0.3);
+            color: var(--text-primary);
+        }
+
+        .message-invalid {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--text-secondary);
+        }
+
+        .message-status {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .message-valid .message-status {
+            background: var(--wa-green);
+            color: white;
+        }
+
+        .message-invalid .message-status {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .message-content {
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* View Switcher */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
         }
 
         /* RESPONSIVE */
@@ -382,6 +638,33 @@
             .logo-text, .sidebar-stats, .nav-link span {
                 display: none;
             }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .breakdown-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -393,408 +676,323 @@
                 <div class="logo-icon">💬</div>
                 <div class="logo-text">WA <span>Analyzer</span></div>
             </div>
-            <div class="sidebar-stats" id="sidebarStats">Loading...</div>
-            <nav>
-                <ul class="nav-menu">
-                    <li class="nav-item">
-                        <a href="main.html" class="nav-link">
-                            <span class="nav-icon">📊</span>
-                            <span>Overview</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="main.html#leaderboard" class="nav-link">
-                            <span class="nav-icon">🏆</span>
-                            <span>Leaderboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link active">
-                            <span class="nav-icon">🔥</span>
-                            <span>BOM Competition</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
+            <div class="sidebar-stats" id="sidebarStats">
+                Loading data...
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="main.html" class="nav-link">
+                        <span class="nav-icon">📊</span>
+                        <span>Overview</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="main.html#leaderboard" class="nav-link">
+                        <span class="nav-icon">🏆</span>
+                        <span>Leaderboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="bom.html" class="nav-link active">
+                        <span class="nav-icon">🔥</span>
+                        <span>BOM</span>
+                    </a>
+                </li>
+            </ul>
         </aside>
 
         <!-- MAIN CONTENT -->
-        <main class="main-content" id="mainContent">
-            <!-- Content will be injected here -->
+        <main class="main-content">
+            <!-- VIEW 1: DASHBOARD (EXISTING + UPDATED) -->
+            <div id="dashboardView" class="view active">
+                <div class="page-header">
+                    <h1 class="page-title">🔥 Batch Of Month</h1>
+                    <p class="page-subtitle">Batch vs Batch Competition • Click scores to explore</p>
+                </div>
+
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Stats will be rendered here -->
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">🏆 BOM Leaderboard</h2>
+                        <p class="chart-subtitle">Rankings based on messages, activity & consistency</p>
+                    </div>
+                    <div id="leaderboard">
+                        <!-- Leaderboard items will be rendered here -->
+                    </div>
+                </div>
+
+                <div class="chart-card" id="todayCard">
+                    <!-- Today's leader will be rendered here -->
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h2 class="chart-title">📋 BOM Rules</h2>
+                        <p class="chart-subtitle">How points are calculated</p>
+                    </div>
+                    <ul class="rules-list">
+                        <li>1 point per valid message (6 AM - 10 PM, length > 3, no spam)</li>
+                        <li>Messages must be from April 1 onwards</li>
+                        <li>Consistency bonus: +50 for 20+ days, +20 for 10+ days</li>
+                        <li>Max 3 members per batch</li>
+                        <li>Batch 2025 (BOM Squad) excluded from competition</li>
+                    </ul>
+                </div>
+
+                <div class="chart-card squad-card" id="squadCard" style="display: none;">
+                    <!-- BOM Squad will be rendered here -->
+                </div>
+            </div>
+
+            <!-- NEW: VIEW 2: BATCH DETAIL -->
+            <div id="detailView" class="view">
+                <button class="btn-back" onclick="goBack()">← Back to Leaderboard</button>
+                
+                <div class="page-header">
+                    <h1 class="page-title" id="detailTitle">Batch Breakdown</h1>
+                    <p class="page-subtitle" id="detailSubtitle">Detailed scoring analysis</p>
+                </div>
+
+                <div class="breakdown-grid" id="breakdownGrid">
+                    <!-- Breakdown items will be rendered here -->
+                </div>
+
+                <div class="chart-card">
+                    <button class="btn-primary" onclick="openBatchChat()" style="width: 100%;">
+                        💬 View All Messages
+                    </button>
+                </div>
+            </div>
+
+            <!-- NEW: VIEW 3: CHAT EXPLORER -->
+            <div id="chatView" class="view">
+                <button class="btn-back" onclick="goBackToDetail()">← Back to Breakdown</button>
+                
+                <div class="page-header">
+                    <h1 class="page-title" id="chatTitle">Batch Chat Explorer</h1>
+                    <p class="page-subtitle" id="chatSubtitle">Message validation transparency</p>
+                </div>
+
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <div class="chat-stats" id="chatStats">
+                            <!-- Chat stats will be rendered here -->
+                        </div>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Messages will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <div class="empty-state-icon">📊</div>
+                <h2 class="empty-state-title">No Data Available</h2>
+                <p class="empty-state-text">Please upload a WhatsApp chat in the main app first</p>
+                <a href="main.html" class="btn-primary">Go to Main App</a>
+            </div>
         </main>
     </div>
 
     <script>
-        // ===========================
-        // DATA LOADING & VALIDATION
-        // ===========================
-        
-        let rawData = [];
-        let validMessages = [];
-        let batches = {};
-        let bomResults = {};
-        let todayResults = {};
+        // ============================================
+        // STATE MANAGEMENT
+        // ============================================
+        const state = {
+            view: 'dashboard', // dashboard | detail | chat
+            selectedBatch: null,
+            rawMessages: [],
+            validMessages: [],
+            batches: {},
+            batchScores: []
+        };
 
-        // Load data from localStorage
+        // ============================================
+        // DATA LOADING & PARSING
+        // ============================================
         function loadData() {
+            const rawData = localStorage.getItem('wa_data');
+            
+            if (!rawData) {
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('dashboardView').style.display = 'none';
+                return false;
+            }
+
             try {
-                const stored = localStorage.getItem('wa_data');
-                if (!stored) return false;
-                rawData = JSON.parse(stored);
-                return rawData.length > 0;
-            } catch (e) {
-                console.error('Data loading error:', e);
+                state.rawMessages = JSON.parse(rawData);
+                console.log(`✅ Loaded ${state.rawMessages.length} messages`);
+                
+                // Precompute valid messages ONCE (Performance optimization)
+                state.validMessages = state.rawMessages.filter(isValidMessage);
+                console.log(`✅ Valid messages: ${state.validMessages.length}`);
+                
+                // Detect batches
+                state.batches = detectBatches(state.rawMessages);
+                console.log(`✅ Detected batches:`, Object.keys(state.batches));
+                
+                // Calculate scores
+                state.batchScores = calculateBatchScores();
+                
+                return true;
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('dashboardView').style.display = 'none';
                 return false;
             }
         }
 
-        // ===========================
-        // MESSAGE VALIDATION
-        // ===========================
-        
-        const SPAM_PHRASES = [
-            'good morning', 'good night', 'gm', 'gn',
-            'hi', 'hello', 'hey', 'ok', 'okay', 'yes', 'no',
-            'thanks', 'thank you', 'welcome', 'bye'
-        ];
-
+        // ============================================
+        // MESSAGE VALIDATION (Reused logic)
+        // ============================================
         function isValidMessage(msg) {
-            // System messages check
-            if (!msg.sender || msg.sender.includes('Messages and calls')) return false;
-            
-            // Date validation - only April 1 onwards
-            if (!msg.dateStr) return false;
-            const msgDate = new Date(msg.dateStr);
-            const cutoffDate = new Date('2026-04-01');
+            // Date filter: April 1 onwards
+            const msgDate = new Date(msg.timestamp);
+            const cutoffDate = new Date('2024-04-01'); // Adjust year as needed
             if (msgDate < cutoffDate) return false;
 
-            // Time validation - 6 AM to 10 PM
-            if (msg.hour < 6 || msg.hour >= 22) return false;
+            // Time filter: 6 AM - 10 PM
+            const hour = msg.hour || parseInt(msg.timeStr?.split(':')[0]) || 0;
+            if (hour < 6 || hour >= 22) return false;
 
-            // Content validation
+            // Length filter
             if (!msg.content || msg.content.length <= 3) return false;
 
-            // Spam check
-            const lowerContent = msg.content.toLowerCase().trim();
-            if (SPAM_PHRASES.some(phrase => lowerContent === phrase)) return false;
+            // Spam filter
+            const content = msg.content.toLowerCase().trim();
+            const spamKeywords = [
+                'good morning', 'gm', 'gn', 'good night',
+                'hi', 'hello', 'hey', 'ok', 'okay', 'yes', 'no',
+                'bye', 'thanks', 'thank you', 'welcome'
+            ];
+            
+            if (spamKeywords.some(spam => content === spam || content.startsWith(spam + ' '))) {
+                return false;
+            }
+
+            // System message filter
+            if (msg.content.includes('added') || 
+                msg.content.includes('left') || 
+                msg.content.includes('changed') ||
+                msg.content.includes('created group')) {
+                return false;
+            }
 
             return true;
         }
 
-        // ===========================
+        // ============================================
         // BATCH DETECTION
-        // ===========================
-        
+        // ============================================
         function detectBatches(messages) {
-            const batchMap = {};
-            const userSet = new Set();
+            const batches = {};
+            const yearPattern = /^(\d{4})_\d+$/;
 
-            // Extract unique users
             messages.forEach(msg => {
-                if (msg.sender) userSet.add(msg.sender);
-            });
+                const match = msg.sender?.match(yearPattern);
+                if (match) {
+                    const year = match[1];
+                    
+                    // Skip BOM Squad (2025)
+                    if (year === '2025') return;
 
-            // Group by batch year
-            userSet.forEach(user => {
-                // Extract year using regex - looking for 20XX pattern
-                const yearMatch = user.match(/\b(20\d{2})\b/);
-                if (yearMatch) {
-                    const year = yearMatch[1];
-                    if (!batchMap[year]) batchMap[year] = [];
-                    // Max 3 users per batch
-                    if (batchMap[year].length < 3) {
-                        batchMap[year].push(user);
+                    if (!batches[year]) {
+                        batches[year] = [];
+                    }
+                    
+                    // Max 3 members per batch
+                    if (!batches[year].includes(msg.sender) && batches[year].length < 3) {
+                        batches[year].push(msg.sender);
                     }
                 }
             });
 
-            return batchMap;
+            return batches;
         }
 
-        // ===========================
-        // SCORING SYSTEM
-        // ===========================
-        
-        function calculateBOMScores() {
-            const scores = {};
-            const dailyActivity = {};
+        // ============================================
+        // SCORING LOGIC
+        // ============================================
+        function calculateBatchScores() {
+            const scores = [];
 
-            // Initialize scores
-            Object.keys(batches).forEach(year => {
-                if (year === '2025') return; // Skip BOM Squad
-                scores[year] = {
-                    batch: year,
-                    members: batches[year],
-                    totalMessages: 0,
-                    activeDays: new Set(),
-                    score: 0
-                };
-            });
+            Object.entries(state.batches).forEach(([year, members]) => {
+                // Message points
+                const batchMessages = state.validMessages.filter(msg => 
+                    members.includes(msg.sender)
+                );
+                const messagePoints = batchMessages.length;
 
-            // Count messages and active days
-            validMessages.forEach(msg => {
-                const yearMatch = msg.sender.match(/\b(20\d{2})\b/);
-                if (!yearMatch) return;
-                
-                const year = yearMatch[1];
-                if (!scores[year]) return;
-
-                scores[year].totalMessages++;
-                scores[year].activeDays.add(msg.dateStr);
-            });
-
-            // Calculate final scores
-            Object.keys(scores).forEach(year => {
-                const data = scores[year];
-                const activeDaysCount = data.activeDays.size;
-                
-                // Base score: total messages
-                let score = data.totalMessages;
+                // Active days
+                const uniqueDays = new Set(
+                    batchMessages.map(msg => msg.dateStr)
+                );
+                const activeDays = uniqueDays.size;
 
                 // Consistency bonus
-                if (activeDaysCount > 20) {
-                    score += 50;
-                } else if (activeDaysCount > 10) {
-                    score += 20;
-                }
+                let consistencyBonus = 0;
+                if (activeDays > 20) consistencyBonus = 50;
+                else if (activeDays > 10) consistencyBonus = 20;
 
-                data.score = score;
-                data.activeDaysCount = activeDaysCount;
-            });
+                // Total score
+                const totalScore = messagePoints + consistencyBonus;
 
-            return scores;
-        }
-
-        // ===========================
-        // TODAY'S LEADERBOARD
-        // ===========================
-        
-        function calculateTodayScores() {
-            const today = new Date().toLocaleDateString('en-GB');
-            const scores = {};
-
-            // Initialize
-            Object.keys(batches).forEach(year => {
-                if (year === '2025') return;
-                scores[year] = {
+                scores.push({
                     batch: year,
-                    messages: 0
-                };
+                    members,
+                    messagePoints,
+                    activeDays,
+                    consistencyBonus,
+                    totalScore
+                });
             });
 
-            // Count today's messages only
-            validMessages.forEach(msg => {
-                if (msg.dateStr !== today) return;
-                
-                const yearMatch = msg.sender.match(/\b(20\d{2})\b/);
-                if (!yearMatch) return;
-                
-                const year = yearMatch[1];
-                if (scores[year]) {
-                    scores[year].messages++;
-                }
-            });
+            // Sort by total score
+            scores.sort((a, b) => b.totalScore - a.totalScore);
 
             return scores;
         }
 
-        // ===========================
-        // RENDER FUNCTIONS
-        // ===========================
-        
-        function renderEmptyState() {
-            document.getElementById('mainContent').innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-icon">📊</div>
-                    <div class="empty-state-title">No Data Available</div>
-                    <div class="empty-state-text">Please upload a WhatsApp chat file in the main app first</div>
-                    <a href="main.html" class="btn-primary">Go to Main App</a>
-                </div>
-            `;
-        }
-
+        // ============================================
+        // RENDER DASHBOARD (EXISTING + UPDATED)
+        // ============================================
         function renderDashboard() {
-            const sortedBatches = Object.values(bomResults)
-                .sort((a, b) => b.score - a.score);
+            // Stats cards
+            const totalBatches = state.batchScores.length;
+            const totalMessages = state.validMessages.length;
+            const todayMessages = getTodayMessages();
+            const topToday = getTopBatchToday();
 
-            const topBatch = sortedBatches[0];
-            const todaySorted = Object.values(todayResults)
-                .sort((a, b) => b.messages - a.messages);
-            const todayWinner = todaySorted[0];
-
-            const maxScore = topBatch ? topBatch.score : 1;
-
-            // Get BOM Squad data
-            const bomSquad = batches['2025'] || [];
-
-            const html = `
-                <div class="page-header">
-                    <h1 class="page-title">🔥 Batch Of Month</h1>
-                    <p class="page-subtitle">Batch vs Batch Competition • Live Rankings</p>
-                </div>
-
-                <!-- STATS GRID -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Batches</div>
-                        <div class="stat-value">
-                            ${Object.keys(bomResults).length}
-                            <span class="stat-icon">🎓</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Valid Messages</div>
-                        <div class="stat-value">
-                            ${validMessages.length.toLocaleString()}
-                            <span class="stat-icon">💬</span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Today's Leader</div>
-                        <div class="stat-value">
-                            Batch ${todayWinner ? todayWinner.batch : '-'}
-                            <span class="stat-icon">⚡</span>
-                        </div>
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Batches</div>
+                    <div class="stat-value">
+                        <span class="stat-icon">🎓</span>
+                        ${totalBatches}
                     </div>
                 </div>
-
-                <!-- BOM SQUAD -->
-                ${bomSquad.length > 0 ? `
-                <div class="chart-card squad-card">
-                    <div class="chart-header">
-                        <div class="chart-title">👑 BOM Squad (Judges)</div>
-                        <div class="chart-subtitle">${bomSquad.join(' • ')}</div>
+                <div class="stat-card">
+                    <div class="stat-label">Valid Messages</div>
+                    <div class="stat-value">
+                        <span class="stat-icon">💬</span>
+                        ${totalMessages.toLocaleString()}
                     </div>
                 </div>
-                ` : ''}
-
-                <!-- MAIN LEADERBOARD -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <div class="chart-title">🏆 BOM Leaderboard</div>
-                        <div class="chart-subtitle">All-time Rankings • April 1 onwards</div>
+                <div class="stat-card">
+                    <div class="stat-label">Today's Messages</div>
+                    <div class="stat-value">
+                        <span class="stat-icon">📅</span>
+                        ${todayMessages.toLocaleString()}
                     </div>
-                    ${sortedBatches.map((batch, index) => {
-                        const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank-other';
-                        const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1;
-                        const percentage = (batch.score / maxScore) * 100;
-
-                        return `
-                            <div class="leaderboard-item">
-                                <div class="rank-badge ${rankClass}">${medal}</div>
-                                <div class="batch-info">
-                                    <div class="batch-name">Batch ${batch.batch}</div>
-                                    <div class="batch-members">${batch.members.join(' • ')}</div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: ${percentage}%"></div>
-                                    </div>
-                                </div>
-                                <div class="batch-score">
-                                    <div class="score-value">${batch.score}</div>
-                                    <div class="score-label">points</div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
                 </div>
-
-                <!-- TODAY'S LEADERBOARD -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <div class="chart-title">📅 Today's Performance</div>
-                        <div class="chart-subtitle">${new Date().toLocaleDateString('en-GB')}</div>
+                <div class="stat-card">
+                    <div class="stat-label">Today's Leader</div>
+                    <div class="stat-value">
+                        <span class="stat-icon">👑</span>
+                        ${topToday.batch || 'N/A'}
                     </div>
-                    ${todaySorted.filter(b => b.messages > 0).map((batch, index) => {
-                        const maxToday = todayWinner.messages || 1;
-                        const percentage = (batch.messages / maxToday) * 100;
-
-                        return `
-                            <div class="leaderboard-item">
-                                <div class="rank-badge rank-other">${index + 1}</div>
-                                <div class="batch-info">
-                                    <div class="batch-name">Batch ${batch.batch}</div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill" style="width: ${percentage}%"></div>
-                                    </div>
-                                </div>
-                                <div class="batch-score">
-                                    <div class="score-value">${batch.messages}</div>
-                                    <div class="score-label">messages</div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                    ${todaySorted.every(b => b.messages === 0) ? '<p style="text-align:center; color: var(--text-secondary); padding: 20px;">No activity today yet</p>' : ''}
-                </div>
-
-                <!-- RULES -->
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <div class="chart-title">📋 Competition Rules</div>
-                        <div class="chart-subtitle">How scoring works</div>
-                    </div>
-                    <ul class="rules-list">
-                        <li>Valid time: 6 AM - 10 PM</li>
-                        <li>Minimum message length: 3 characters</li>
-                        <li>Spam messages are ignored (hi, hello, ok, etc.)</li>
-                        <li>Messages from April 1 onwards count</li>
-                        <li>Consistency bonus: +50 for >20 days, +20 for >10 days</li>
-                        <li>Max 3 members per batch</li>
-                        <li>Batch 2025 is BOM Squad (Judges only)</li>
-                    </ul>
-                </div>
-            `;
-
-            document.getElementById('mainContent').innerHTML = html;
-        }
-
-        // ===========================
-        // INITIALIZE APP
-        // ===========================
-        
-        function init() {
-            // Load data
-            if (!loadData()) {
-                renderEmptyState();
-                document.getElementById('sidebarStats').textContent = 'No data loaded';
-                return;
-            }
-
-            // PERFORMANCE: Filter valid messages ONCE
-            console.time('Filter Valid Messages');
-            validMessages = rawData.filter(isValidMessage);
-            console.timeEnd('Filter Valid Messages');
-
-            // Update sidebar stats
-            document.getElementById('sidebarStats').textContent = 
-                `${validMessages.length} valid messages`;
-
-            // Detect batches
-            console.time('Detect Batches');
-            batches = detectBatches(validMessages);
-            console.timeEnd('Detect Batches');
-
-            // Calculate scores
-            console.time('Calculate BOM Scores');
-            bomResults = calculateBOMScores();
-            console.timeEnd('Calculate BOM Scores');
-
-            console.time('Calculate Today Scores');
-            todayResults = calculateTodayScores();
-            console.timeEnd('Calculate Today Scores');
-
-            // Render
-            console.time('Render Dashboard');
-            renderDashboard();
-            console.timeEnd('Render Dashboard');
-
-            console.log('BOM Dashboard loaded successfully');
-            console.log('Batches:', batches);
-            console.log('Results:', bomResults);
-        }
-
-        // Run on page load
-        init();
-    </script>
-</body>
-</html>
