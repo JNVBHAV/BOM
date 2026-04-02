@@ -41,7 +41,7 @@
             min-height: 100vh;
         }
 
-        /* SIDEBAR - Exact match */
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg-secondary);
@@ -117,11 +117,6 @@
         .nav-link.active {
             background: var(--accent-green);
             color: white;
-        }
-
-        .nav-link.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
         }
 
         .nav-icon {
@@ -276,7 +271,6 @@
             text-align: right;
         }
 
-        /* UPDATED: Clickable Score */
         .score-value {
             font-size: 28px;
             font-weight: 700;
@@ -298,7 +292,6 @@
             color: var(--text-muted);
         }
 
-        /* PROGRESS BAR */
         .progress-bar {
             width: 100%;
             height: 6px;
@@ -314,7 +307,7 @@
             transition: width 0.5s ease;
         }
 
-        /* RULES CARD */
+        /* RULES */
         .rules-list {
             list-style: none;
         }
@@ -335,43 +328,6 @@
             margin-right: 8px;
         }
 
-        /* SPECIAL SQUAD */
-        .squad-card {
-            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
-            border: none;
-            color: white;
-        }
-
-        .squad-card .stat-label,
-        .squad-card .batch-members {
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        /* EMPTY STATE */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .empty-state-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            opacity: 0.3;
-        }
-
-        .empty-state-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--text-primary);
-        }
-
-        .empty-state-text {
-            font-size: 16px;
-            margin-bottom: 24px;
-        }
-
         /* BUTTONS */
         .btn-primary {
             display: inline-block;
@@ -390,25 +346,6 @@
         .btn-primary:hover {
             background: #059669;
             transform: translateY(-2px);
-        }
-
-        .btn-secondary {
-            display: inline-block;
-            padding: 12px 24px;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.2s;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .btn-secondary:hover {
-            background: var(--bg-card-hover);
-            border-color: var(--accent-green);
         }
 
         .btn-back {
@@ -433,7 +370,7 @@
             border-color: var(--accent-green);
         }
 
-        /* NEW: Breakdown Grid */
+        /* BREAKDOWN GRID */
         .breakdown-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -474,7 +411,7 @@
             margin-top: 4px;
         }
 
-        /* NEW: Chat Explorer */
+        /* CHAT EXPLORER */
         .chat-container {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
@@ -617,13 +554,38 @@
             line-height: 1.5;
         }
 
-        /* View Switcher */
+        /* VIEW MANAGEMENT */
         .view {
             display: none;
         }
 
         .view.active {
             display: block;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            margin-bottom: 24px;
         }
 
         /* RESPONSIVE */
@@ -641,30 +603,6 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-            .breakdown-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-secondary);
-        }
-
-        .spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid var(--border-color);
-            border-top-color: var(--accent-green);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -681,13 +619,13 @@
             </div>
             <ul class="nav-menu">
                 <li class="nav-item">
-                    <a href="main.html" class="nav-link">
+                    <a href="index.html" class="nav-link">
                         <span class="nav-icon">📊</span>
                         <span>Overview</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="main.html#leaderboard" class="nav-link">
+                    <a href="index.html#leaderboard" class="nav-link">
                         <span class="nav-icon">🏆</span>
                         <span>Leaderboard</span>
                     </a>
@@ -703,7 +641,7 @@
 
         <!-- MAIN CONTENT -->
         <main class="main-content">
-            <!-- VIEW 1: DASHBOARD (EXISTING + UPDATED) -->
+            <!-- VIEW 1: DASHBOARD -->
             <div id="dashboardView" class="view active">
                 <div class="page-header">
                     <h1 class="page-title">🔥 Batch Of Month</h1>
@@ -720,12 +658,8 @@
                         <p class="chart-subtitle">Rankings based on messages, activity & consistency</p>
                     </div>
                     <div id="leaderboard">
-                        <!-- Leaderboard items will be rendered here -->
+                        <!-- Leaderboard will be rendered here -->
                     </div>
-                </div>
-
-                <div class="chart-card" id="todayCard">
-                    <!-- Today's leader will be rendered here -->
                 </div>
 
                 <div class="chart-card">
@@ -741,13 +675,9 @@
                         <li>Batch 2025 (BOM Squad) excluded from competition</li>
                     </ul>
                 </div>
-
-                <div class="chart-card squad-card" id="squadCard" style="display: none;">
-                    <!-- BOM Squad will be rendered here -->
-                </div>
             </div>
 
-            <!-- NEW: VIEW 2: BATCH DETAIL -->
+            <!-- VIEW 2: BATCH DETAIL -->
             <div id="detailView" class="view">
                 <button class="btn-back" onclick="goBack()">← Back to Leaderboard</button>
                 
@@ -757,7 +687,7 @@
                 </div>
 
                 <div class="breakdown-grid" id="breakdownGrid">
-                    <!-- Breakdown items will be rendered here -->
+                    <!-- Breakdown will be rendered here -->
                 </div>
 
                 <div class="chart-card">
@@ -767,7 +697,7 @@
                 </div>
             </div>
 
-            <!-- NEW: VIEW 3: CHAT EXPLORER -->
+            <!-- VIEW 3: CHAT EXPLORER -->
             <div id="chatView" class="view">
                 <button class="btn-back" onclick="goBackToDetail()">← Back to Breakdown</button>
                 
@@ -779,7 +709,7 @@
                 <div class="chat-container">
                     <div class="chat-header">
                         <div class="chat-stats" id="chatStats">
-                            <!-- Chat stats will be rendered here -->
+                            <!-- Stats will be rendered here -->
                         </div>
                     </div>
                     <div class="chat-messages" id="chatMessages">
@@ -793,7 +723,7 @@
                 <div class="empty-state-icon">📊</div>
                 <h2 class="empty-state-title">No Data Available</h2>
                 <p class="empty-state-text">Please upload a WhatsApp chat in the main app first</p>
-                <a href="main.html" class="btn-primary">Go to Main App</a>
+                <a href="index.html" class="btn-primary">Go to Main App</a>
             </div>
         </main>
     </div>
@@ -803,7 +733,7 @@
         // STATE MANAGEMENT
         // ============================================
         const state = {
-            view: 'dashboard', // dashboard | detail | chat
+            view: 'dashboard',
             selectedBatch: null,
             rawMessages: [],
             validMessages: [],
@@ -812,14 +742,13 @@
         };
 
         // ============================================
-        // DATA LOADING & PARSING
+        // DATA LOADING
         // ============================================
         function loadData() {
             const rawData = localStorage.getItem('wa_data');
             
             if (!rawData) {
-                document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('dashboardView').style.display = 'none';
+                showEmptyState();
                 return false;
             }
 
@@ -827,7 +756,7 @@
                 state.rawMessages = JSON.parse(rawData);
                 console.log(`✅ Loaded ${state.rawMessages.length} messages`);
                 
-                // Precompute valid messages ONCE (Performance optimization)
+                // Precompute valid messages
                 state.validMessages = state.rawMessages.filter(isValidMessage);
                 console.log(`✅ Valid messages: ${state.validMessages.length}`);
                 
@@ -837,41 +766,54 @@
                 
                 // Calculate scores
                 state.batchScores = calculateBatchScores();
+                console.log(`✅ Batch scores:`, state.batchScores);
                 
                 return true;
             } catch (error) {
                 console.error('❌ Error loading data:', error);
-                document.getElementById('emptyState').style.display = 'block';
-                document.getElementById('dashboardView').style.display = 'none';
+                showEmptyState();
                 return false;
             }
         }
 
+        function showEmptyState() {
+            document.getElementById('emptyState').style.display = 'block';
+            document.getElementById('dashboardView').style.display = 'none';
+        }
+
         // ============================================
-        // MESSAGE VALIDATION (Reused logic)
+        // MESSAGE VALIDATION
         // ============================================
         function isValidMessage(msg) {
-            // Date filter: April 1 onwards
-            const msgDate = new Date(msg.timestamp);
-            const cutoffDate = new Date('2024-04-01'); // Adjust year as needed
-            if (msgDate < cutoffDate) return false;
+            // Skip if no content
+            if (!msg.content || typeof msg.content !== 'string') return false;
+
+            // Date filter: April 1, 2024 onwards
+            try {
+                const msgDate = new Date(msg.timestamp);
+                const currentYear = new Date().getFullYear();
+                const cutoffDate = new Date(`${currentYear}-04-01`);
+                if (msgDate < cutoffDate) return false;
+            } catch (e) {
+                return false;
+            }
 
             // Time filter: 6 AM - 10 PM
             const hour = msg.hour || parseInt(msg.timeStr?.split(':')[0]) || 0;
             if (hour < 6 || hour >= 22) return false;
 
             // Length filter
-            if (!msg.content || msg.content.length <= 3) return false;
+            if (msg.content.length <= 3) return false;
 
             // Spam filter
             const content = msg.content.toLowerCase().trim();
             const spamKeywords = [
                 'good morning', 'gm', 'gn', 'good night',
                 'hi', 'hello', 'hey', 'ok', 'okay', 'yes', 'no',
-                'bye', 'thanks', 'thank you', 'welcome'
+                'bye', 'thanks', 'thank you', 'welcome', 'hmm', 'hm'
             ];
             
-            if (spamKeywords.some(spam => content === spam || content.startsWith(spam + ' '))) {
+            if (spamKeywords.some(spam => content === spam || content === spam + '.' || content === spam + '!')) {
                 return false;
             }
 
@@ -879,7 +821,9 @@
             if (msg.content.includes('added') || 
                 msg.content.includes('left') || 
                 msg.content.includes('changed') ||
-                msg.content.includes('created group')) {
+                msg.content.includes('created group') ||
+                msg.content.includes('removed') ||
+                msg.content.includes('joined using')) {
                 return false;
             }
 
@@ -894,7 +838,9 @@
             const yearPattern = /^(\d{4})_\d+$/;
 
             messages.forEach(msg => {
-                const match = msg.sender?.match(yearPattern);
+                if (!msg.sender) return;
+                
+                const match = msg.sender.match(yearPattern);
                 if (match) {
                     const year = match[1];
                     
@@ -959,14 +905,16 @@
         }
 
         // ============================================
-        // RENDER DASHBOARD (EXISTING + UPDATED)
+        // RENDER DASHBOARD
         // ============================================
         function renderDashboard() {
+            // Update sidebar stats
+            document.getElementById('sidebarStats').textContent = 
+                `${state.rawMessages.length.toLocaleString()} messages loaded`;
+
             // Stats cards
             const totalBatches = state.batchScores.length;
             const totalMessages = state.validMessages.length;
-            const todayMessages = getTodayMessages();
-            const topToday = getTopBatchToday();
 
             document.getElementById('statsGrid').innerHTML = `
                 <div class="stat-card">
@@ -984,15 +932,210 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Today's Messages</div>
-                    <div class="stat-value">
-                        <span class="stat-icon">📅</span>
-                        ${todayMessages.toLocaleString()}
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Today's Leader</div>
+                    <div class="stat-label">Top Batch</div>
                     <div class="stat-value">
                         <span class="stat-icon">👑</span>
-                        ${topToday.batch || 'N/A'}
+                        ${state.batchScores[0]?.batch || 'N/A'}
                     </div>
+                </div>
+            `;
+
+            // Leaderboard
+            if (state.batchScores.length === 0) {
+                document.getElementById('leaderboard').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        No batches detected. Make sure usernames follow format: YYYY_N (e.g., 2006_1)
+                    </div>
+                `;
+                return;
+            }
+
+            const maxScore = state.batchScores[0]?.totalScore || 1;
+            
+            const leaderboardHTML = state.batchScores.map((batch, index) => {
+                const rank = index + 1;
+                const rankClass = rank === 1 ? 'rank-1' : rank === 2 ? 'rank-2' : rank === 3 ? 'rank-3' : 'rank-other';
+                const progressPercent = (batch.totalScore / maxScore) * 100;
+
+                return `
+                    <div class="leaderboard-item">
+                        <div class="rank-badge ${rankClass}">${rank}</div>
+                        <div class="batch-info">
+                            <div class="batch-name">Batch ${batch.batch}</div>
+                            <div class="batch-members">${batch.members.join(', ')}</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="batch-score">
+                                                        <div class="score-value" onclick="openBatchDetail('${batch.batch}')">
+                                ${batch.totalScore}
+                            </div>
+                            <div class="score-label">Points</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('leaderboard').innerHTML = leaderboardHTML;
+        }
+
+        // ============================================
+        // OPEN BATCH DETAIL VIEW
+        // ============================================
+        // NEW: Batch Detail View
+        function openBatchDetail(batchYear) {
+            const batchData = state.batchScores.find(b => b.batch === batchYear);
+            if (!batchData) return alert("Batch data not found");
+
+            state.selectedBatch = batchData;
+            switchView('detail');
+
+            // Set titles
+            document.getElementById('detailTitle').textContent = `Batch Breakdown: ${batchYear}`;
+            document.getElementById('detailSubtitle').textContent = `Members: ${batchData.members.join(', ')}`;
+
+            // Render breakdown grid
+            const breakdownHTML = `
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">💬</div>
+                    <div class="breakdown-label">Message Points</div>
+                    <div class="breakdown-value">${batchData.messagePoints}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">📅</div>
+                    <div class="breakdown-label">Active Days</div>
+                    <div class="breakdown-value">${batchData.activeDays}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">⚡</div>
+                    <div class="breakdown-label">Consistency Bonus</div>
+                    <div class="breakdown-value">${batchData.consistencyBonus}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="breakdown-icon">🏆</div>
+                    <div class="breakdown-label">Total Score</div>
+                    <div class="breakdown-value">${batchData.totalScore}</div>
+                </div>
+            `;
+
+            document.getElementById('breakdownGrid').innerHTML = breakdownHTML;
+        }
+
+        // ============================================
+        // OPEN BATCH CHAT VIEW
+        // ============================================
+        // NEW: Chat Explorer
+        function openBatchChat() {
+            if (!state.selectedBatch) return alert("No batch selected");
+            switchView('chat');
+
+            const members = state.selectedBatch.members;
+
+            // Filter all messages from batch members (limit to last 500)
+            const batchMessagesAll = state.rawMessages.filter(msg => members.includes(msg.sender));
+            const batchMessages = batchMessagesAll.slice(-500);
+
+            // Separate valid and invalid
+            const validSet = new Set(state.validMessages.map(m => m.timestamp));
+            const validCount = batchMessages.filter(m => validSet.has(m.timestamp)).length;
+            const invalidCount = batchMessages.length - validCount;
+
+            // Update chat stats
+            document.getElementById('chatStats').innerHTML = `
+                <div class="chat-stat">
+                    <div class="chat-stat-icon">🗒️</div>
+                    <div class="chat-stat-info">
+                        <div class="chat-stat-label">Total Messages</div>
+                        <div class="chat-stat-value">${batchMessages.length}</div>
+                    </div>
+                </div>
+                <div class="chat-stat">
+                    <div class="chat-stat-icon" style="color: var(--wa-green)">✅</div>
+                    <div class="chat-stat-info">
+                        <div class="chat-stat-label">Valid Messages</div>
+                        <div class="chat-stat-value">${validCount}</div>
+                    </div>
+                </div>
+                <div class="chat-stat">
+                    <div class="chat-stat-icon" style="color: var(--accent-red)">❌</div>
+                    <div class="chat-stat-info">
+                        <div class="chat-stat-label">Invalid Messages</div>
+                        <div class="chat-stat-value">${invalidCount}</div>
+                    </div>
+                </div>
+            `;
+
+            // Render messages
+            const msgsHtml = batchMessages.map(msg => {
+                const isValid = validSet.has(msg.timestamp);
+                const cls = isValid ? 'message-valid' : 'message-invalid';
+                const ts = new Date(msg.timestamp);
+                const timeString = ts.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                return `
+                    <div class="message-item">
+                        <div class="message-header">
+                            <div class="message-sender">${msg.sender}</div>
+                            <div class="message-time">${msg.dateStr} ${timeString}</div>
+                        </div>
+                        <div class="message-bubble ${cls}">
+                            <div class="message-content">${escapeHtml(msg.content)}</div>
+                            <div class="message-status">${isValid ? '✓' : '✗'}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('chatMessages').innerHTML = msgsHtml;
+        }
+
+        // ============================================
+        // NAVIGATION HELPERS
+        // ============================================
+        function switchView(viewName) {
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.toggle('active', view.id === viewName + 'View');
+            });
+            state.view = viewName;
+        }
+
+        // Go back from detail to dashboard
+        function goBack() {
+            state.selectedBatch = null;
+            switchView('dashboard');
+        }
+
+        // Go back from chat to detail
+        function goBackToDetail() {
+            switchView('detail');
+        }
+
+        // ============================================
+        // UTILITIES
+        // ============================================
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"']/g, function(m) {
+                switch(m) {
+                    case '&': return '&amp;';
+                    case '<': return '&lt;';
+                    case '>': return '&gt;';
+                    case '"': return '&quot;';
+                    case "'": return '&#39;';
+                    default: return m;
+                }
+            });
+        }
+
+        // ============================================
+        // INIT ON PAGE LOAD
+        // ============================================
+        window.onload = () => {
+            if (loadData()) {
+                renderDashboard();
+            }
+        };
+    </script>
+</body>
+</html>
