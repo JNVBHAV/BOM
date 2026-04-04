@@ -856,9 +856,7 @@ body::before {
   }
 
   /* hide text label, keep emoji on very small screens */
-  @media (max-width: 380px) {
-    .nav-btn .nav-label { display: none; }
-  }
+  /* handled by standalone @media (max-width: 380px) below */
 
   #file-status {
     display: none; /* moves to page subtitle on mobile */
@@ -1040,6 +1038,11 @@ body::before {
   /* ── Hour chart ── */
   .hour-chart { height: 64px; gap: 2px; }
   .hour-label { font-size: 8px; }
+}
+
+/* Hide nav label text on very small screens, keep emoji */
+@media (max-width: 380px) {
+  .nav-btn .nav-label { display: none; }
 }
 
 /* ═══════════════════════════════════════════════
@@ -1583,6 +1586,9 @@ function computeBatchData() {
   batch2025Data.allMembers = Object.entries(batch2025Data.members)
     .sort((a,b) => b[1].valid - a[1].valid)
     .map(([name, stats]) => ({ name, ...stats }));
+
+  // Compute scores & top3 for all main batches (2006–2024)
+  for (const y in batchData) {
     const bd = batchData[y];
     const days = bd.activeDays.size;
 
@@ -2045,22 +2051,74 @@ function processFile(text, fileName) {
 
 /* ═══════════════════════════════════════════════
    DEFAULT FILE AUTO-LOADER
-   Fetches ./default_chat.txt on page open.
-   Silently skips if the file is absent (404).
-   A manual upload later will override this.
+   Strategy: try fetch() first (works on HTTP server).
+   If that fails (file:// protocol or CORS), show a
+   "Load default file" button on the upload screen so
+   the user can pick default_chat.txt with one tap.
+   Manual upload always overrides.
 ═══════════════════════════════════════════════ */
 const DEFAULT_FILE_PATH = './default_chat.txt';
 
 async function loadDefaultChat() {
+  // Only try fetch on HTTP/HTTPS — skip entirely on file://
+  if (location.protocol === 'file:') {
+    showDefaultFilePicker();
+    return;
+  }
+
   try {
-    const res = await fetch(DEFAULT_FILE_PATH);
-    if (!res.ok) throw new Error('No default file');
+    const res = await fetch(DEFAULT_FILE_PATH, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const text = await res.text();
+    if (!text.trim()) throw new Error('Empty file');
     processFile(text, 'Default Chat');
   } catch (err) {
-    // File absent or unreachable — let user upload manually
-    console.warn('No default chat found:', err.message);
+    console.warn('Default chat not loaded via fetch:', err.message);
+    showDefaultFilePicker(); // fallback: show manual pick button
   }
+}
+
+/* Show a subtle "Load default_chat.txt" button on the upload page */
+function showDefaultFilePicker() {
+  const hint = document.getElementById('upload-hint');
+  if (!hint) return;
+  // Avoid duplicate buttons
+  if (document.getElementById('default-file-btn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'default-file-btn';
+  btn.textContent = '📂 Load default_chat.txt';
+  btn.style.cssText = `
+    margin-top: 16px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--card);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+    transition: all 0.2s;
+  `;
+  btn.onmouseenter = () => { btn.style.borderColor = 'var(--accent)'; btn.style.background = 'rgba(0,229,160,0.08)'; };
+  btn.onmouseleave = () => { btn.style.borderColor = 'var(--border2)'; btn.style.background = 'var(--card)'; };
+
+  const hiddenInput = document.createElement('input');
+  hiddenInput.type = 'file';
+  hiddenInput.accept = '.txt';
+  hiddenInput.style.display = 'none';
+  hiddenInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => processFile(ev.target.result, 'Default Chat');
+    reader.readAsText(file, 'utf-8');
+  });
+
+  btn.addEventListener('click', () => hiddenInput.click());
+  hint.after(btn);
+  hint.after(hiddenInput);
 }
 
 window.addEventListener('DOMContentLoaded', loadDefaultChat);
