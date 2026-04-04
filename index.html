@@ -1043,6 +1043,136 @@ body::before {
 }
 
 /* ═══════════════════════════════════════════════
+   BATCH 2025 SPOTLIGHT CARD
+═══════════════════════════════════════════════ */
+.squad-card {
+  background: linear-gradient(135deg, rgba(0,229,160,0.07) 0%, rgba(0,191,255,0.05) 100%);
+  border: 1px solid rgba(0,229,160,0.25);
+  border-radius: var(--radius2);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.squad-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+}
+.squad-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.squad-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.squad-title span {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text3);
+  margin-top: 3px;
+}
+.squad-score-pill {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 12px;
+  padding: 6px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.2;
+  text-align: center;
+}
+.squad-score-pill:hover {
+  background: rgba(0,229,160,0.2);
+  box-shadow: 0 0 20px rgba(0,229,160,0.25);
+  transform: scale(1.03);
+}
+.squad-score-pill small {
+  display: block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text3);
+  letter-spacing: 0.3px;
+}
+.squad-score-pill.zero { color: var(--text3); background: transparent; border-color: transparent; cursor: default; }
+.squad-score-pill.zero:hover { transform: none; box-shadow: none; }
+.squad-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.squad-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.squad-meta-item .smi-val {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.squad-meta-item .smi-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.squad-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.squad-member-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  font-size: 12px;
+  color: var(--text2);
+}
+.squad-member-chip .chip-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.squad-member-chip .chip-dot.d2 { background: var(--accent2); }
+.squad-member-chip .chip-dot.d3 { background: var(--purple); }
+.squad-member-chip .chip-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+@media (max-width: 640px) {
+  .squad-card { padding: 14px; }
+  .squad-title { font-size: 18px; }
+  .squad-score-pill { font-size: 22px; padding: 5px 14px; }
+  .squad-meta { gap: 14px; }
+  .squad-meta-item .smi-val { font-size: 15px; }
+}
+
+/* ═══════════════════════════════════════════════
    UTILITY
 ═══════════════════════════════════════════════ */
 .flex-row { display: flex; align-items: center; gap: 12px; }
@@ -1126,6 +1256,8 @@ body::before {
     </div>
 
     <div class="stats-grid" id="bom-stats"></div>
+
+    <div id="squad-2025-card"></div>
 
     <div class="section-card">
       <div class="section-title">🏆 BOM Leaderboard <span id="bom-period-badge" class="badge" style="font-size:10px"></span></div>
@@ -1348,16 +1480,25 @@ function isAprilMessage(msg) {
    Valid: 2006 → 2024
    Ignore 2025 (BOM Squad / admin)
 ═══════════════════════════════════════════════ */
-const BATCH_RE = /\b(20(0[6-9]|1[0-9]|2[0-4]))\b/;
+const BATCH_RE       = /\b(20(0[6-9]|1[0-9]|2[0-5]))\b/;  // now includes 2025
+const BATCH_RE_SQUAD = /\b2025\b/;                           // 2025-only match
 const VALID_BATCH_MIN = 2006;
 const VALID_BATCH_MAX = 2024;
+
+let batch2025Data = null;   // computed separately for the spotlight card
 
 function extractBatchYear(senderName) {
   const m = senderName.match(BATCH_RE);
   if (!m) return null;
   const y = parseInt(m[1]);
+  // 2025 is handled separately — exclude from main leaderboard
+  if (y === 2025) return null;
   if (y < VALID_BATCH_MIN || y > VALID_BATCH_MAX) return null;
   return y;
+}
+
+function extractIs2025(senderName) {
+  return BATCH_RE_SQUAD.test(senderName);
 }
 
 /* ═══════════════════════════════════════════════
@@ -1409,8 +1550,39 @@ function computeBatchData() {
     bd.members[msg.sender].total++;
   }
 
-  // Compute scores & top3
-  for (const y in batchData) {
+  // ── Compute 2025 (BOM Squad) separately ──
+  batch2025Data = {
+    year: 2025, members: {}, activeDays: new Set(), validCount: 0,
+  };
+
+  for (const msg of bomValidMessages) {
+    if (!extractIs2025(msg.sender)) continue;
+    const bd = batch2025Data;
+    if (!bd.members[msg.sender]) bd.members[msg.sender] = { total: 0, valid: 0 };
+    bd.members[msg.sender].valid++;
+    bd.validCount++;
+    bd.activeDays.add(msg.dateStr);
+  }
+  for (const msg of rawMessages) {
+    if (!isAprilMessage(msg) || !extractIs2025(msg.sender)) continue;
+    if (!batch2025Data.members[msg.sender]) batch2025Data.members[msg.sender] = { total: 0, valid: 0 };
+    batch2025Data.members[msg.sender].total++;
+  }
+
+  const d25 = batch2025Data.activeDays.size;
+  let bonus25 = 0;
+  if (d25 >= 20) bonus25 = 50;
+  else if (d25 >= 10) bonus25 = 20;
+  batch2025Data.messagePoints  = batch2025Data.validCount;
+  batch2025Data.activeDaysCount = d25;
+  batch2025Data.bonus           = bonus25;
+  batch2025Data.score           = batch2025Data.validCount + bonus25;
+  batch2025Data.top3 = Object.entries(batch2025Data.members)
+    .sort((a,b) => b[1].valid - a[1].valid).slice(0,3)
+    .map(([name, stats]) => ({ name, ...stats }));
+  batch2025Data.allMembers = Object.entries(batch2025Data.members)
+    .sort((a,b) => b[1].valid - a[1].valid)
+    .map(([name, stats]) => ({ name, ...stats }));
     const bd = batchData[y];
     const days = bd.activeDays.size;
 
@@ -1574,6 +1746,72 @@ function renderOverview() {
 }
 
 /* ═══════════════════════════════════════════════
+   UI — BATCH 2025 SPOTLIGHT CARD
+   Rendered above the leaderboard in BOM page.
+   Clickable score → opens detail page for 2025.
+═══════════════════════════════════════════════ */
+function render2025Card() {
+  const b = batch2025Data;
+  if (!b) return;
+
+  const scoreHTML = b.score > 0
+    ? `<button class="squad-score-pill" onclick="openBatchDetail2025()">
+         ${b.score.toLocaleString()}
+         <small>SCORE</small>
+       </button>`
+    : `<div class="squad-score-pill zero">0<small>SCORE</small></div>`;
+
+  const membersHTML = b.top3.length
+    ? b.top3.map((m, i) => `
+        <div class="squad-member-chip">
+          <div class="chip-dot ${i===0?'':'d'+(i+1)}"></div>
+          <span>${escHtml(m.name)}</span>
+          <span class="chip-count">${m.valid}</span>
+        </div>`).join('')
+    : `<span style="color:var(--text3);font-size:12px;font-style:italic">No members found</span>`;
+
+  document.getElementById('squad-2025-card').innerHTML = `
+    <div class="squad-card">
+      <div class="squad-header">
+        <div class="squad-title">
+          🏫 Batch 2025
+          <span>BOM Squad · April Only</span>
+        </div>
+        ${scoreHTML}
+      </div>
+      <div class="squad-meta">
+        <div class="squad-meta-item">
+          <div class="smi-val">${b.messagePoints.toLocaleString()}</div>
+          <div class="smi-lbl">💬 Msg Points</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">${b.activeDaysCount}</div>
+          <div class="smi-lbl">📅 Active Days</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">+${b.bonus}</div>
+          <div class="smi-lbl">⚡ Bonus</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">${Object.keys(b.members).length}</div>
+          <div class="smi-lbl">👥 Members</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Top Members</div>
+      <div class="squad-members">${membersHTML}</div>
+    </div>
+  `;
+}
+
+/* open detail page for batch 2025 */
+function openBatchDetail2025() {
+  state.selectedBatch = batch2025Data;
+  state.prevView = 'bom';
+  showPage('detail');
+  renderDetailPage();
+}
+
+/* ═══════════════════════════════════════════════
    UI — RENDER BOM LEADERBOARD
 ═══════════════════════════════════════════════ */
 function renderBOM() {
@@ -1587,6 +1825,9 @@ function renderBOM() {
 
   // April label in badge
   document.getElementById('bom-period-badge').textContent = '📅 April Only';
+
+  // Render Batch 2025 spotlight above leaderboard
+  render2025Card();
 
   // Stats
   document.getElementById('bom-stats').innerHTML = `
@@ -1706,7 +1947,11 @@ function renderChatPage() {
   if (!b) return;
 
   // Get member names set for fast lookup
-  const memberNames = new Set(Object.keys(b.members));
+  const memberNames = new Set(
+    b.year === 2025
+      ? Object.keys(b.members)   // 2025 members stored by extractIs2025
+      : Object.keys(b.members)
+  );
 
   document.getElementById('chat-title').textContent = `💬 Batch ${b.year} — Chat`;
   document.getElementById('chat-subtitle').textContent =
