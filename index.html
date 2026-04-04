@@ -1290,7 +1290,7 @@ body::before {
       <table class="member-table">
         <thead>
           <tr>
-            <th>#</th><th>Name</th><th>Messages</th><th>Valid</th>
+            <th>#</th><th>Name</th><th>Messages</th><th>Valid</th><th>Status</th>
           </tr>
         </thead>
         <tbody id="detail-members"></tbody>
@@ -1576,42 +1576,52 @@ function computeBatchData() {
   let bonus25 = 0;
   if (d25 >= 20) bonus25 = 50;
   else if (d25 >= 10) bonus25 = 20;
-  batch2025Data.messagePoints  = batch2025Data.validCount;
+
+  const sorted25 = Object.entries(batch2025Data.members)
+    .sort((a,b) => b[1].valid - a[1].valid);
+
+  batch2025Data.top3 = sorted25.slice(0,3).map(([name, stats]) => ({ name, ...stats, counted: true }));
+  const counted25Valid = batch2025Data.top3.reduce((sum, m) => sum + m.valid, 0);
+
+  batch2025Data.messagePoints  = counted25Valid;
   batch2025Data.activeDaysCount = d25;
   batch2025Data.bonus           = bonus25;
-  batch2025Data.score           = batch2025Data.validCount + bonus25;
-  batch2025Data.top3 = Object.entries(batch2025Data.members)
-    .sort((a,b) => b[1].valid - a[1].valid).slice(0,3)
-    .map(([name, stats]) => ({ name, ...stats }));
-  batch2025Data.allMembers = Object.entries(batch2025Data.members)
-    .sort((a,b) => b[1].valid - a[1].valid)
-    .map(([name, stats]) => ({ name, ...stats }));
+  batch2025Data.score           = counted25Valid + bonus25;
+  batch2025Data.allMembers = sorted25.map(([name, stats], i) => ({
+    name, ...stats, counted: i < 3,
+  }));
 
   // Compute scores & top3 for all main batches (2006–2024)
   for (const y in batchData) {
     const bd = batchData[y];
     const days = bd.activeDays.size;
 
-    // Bonus
+    // Sort all members by valid count DESC
+    const sorted = Object.entries(bd.members)
+      .sort((a, b) => b[1].valid - a[1].valid);
+
+    // Top 3 contribute to score; rest are displayed but NOT counted
+    bd.top3 = sorted.slice(0, 3).map(([name, stats]) => ({ name, ...stats, counted: true }));
+    const top3Names = new Set(bd.top3.map(m => m.name));
+
+    // Only top3 valid messages count toward score
+    const countedValid = bd.top3.reduce((sum, m) => sum + m.valid, 0);
+
+    // Bonus based on active days (from top3 only)
     let bonus = 0;
     if (days >= 20) bonus = 50;
     else if (days >= 10) bonus = 20;
 
-    bd.messagePoints = bd.validCount;
+    bd.messagePoints  = countedValid;
     bd.activeDaysCount = days;
-    bd.bonus = bonus;
-    bd.score = bd.messagePoints + bonus;
+    bd.bonus  = bonus;
+    bd.score  = countedValid + bonus;
 
-    // Top 3 members sorted by valid count
-    bd.top3 = Object.entries(bd.members)
-      .sort((a, b) => b[1].valid - a[1].valid)
-      .slice(0, 3)
-      .map(([name, stats]) => ({ name, ...stats }));
-
-    // All members sorted
-    bd.allMembers = Object.entries(bd.members)
-      .sort((a, b) => b[1].valid - a[1].valid)
-      .map(([name, stats]) => ({ name, ...stats }));
+    // allMembers: top3 flagged counted=true, rest counted=false
+    bd.allMembers = sorted.map(([name, stats], i) => ({
+      name, ...stats,
+      counted: i < 3,
+    }));
   }
 }
 
@@ -1929,20 +1939,29 @@ function renderDetailPage() {
     </div>
   `;
 
-  // Members table
+  // Members table — top 3 counted (green), rest not counted (red)
   const tbody = document.getElementById('detail-members');
   if (b.allMembers.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text3);padding:24px">No members detected</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px">No members detected</td></tr>`;
     return;
   }
-  tbody.innerHTML = b.allMembers.map((m, i) => `
-    <tr>
-      <td>${i+1}</td>
-      <td>${escHtml(m.name)}</td>
-      <td>${m.total.toLocaleString()}</td>
-      <td style="color:var(--accent)">${m.valid.toLocaleString()}</td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = b.allMembers.map((m, i) => {
+    const counted = m.counted;
+    const rowStyle = counted ? '' : 'opacity:0.55';
+    const rankCell = counted
+      ? `<td style="color:var(--text3);font-family:var(--font-mono);font-size:12px">${i+1}</td>`
+      : `<td style="color:var(--red);font-family:var(--font-mono);font-size:12px">${i+1}</td>`;
+    const nameCell = counted
+      ? `<td style="color:var(--text);font-weight:500">${escHtml(m.name)}</td>`
+      : `<td style="color:var(--red)">${escHtml(m.name)}</td>`;
+    const validCell = counted
+      ? `<td style="color:var(--accent);font-family:var(--font-mono);font-weight:500">${m.valid.toLocaleString()}</td>`
+      : `<td style="color:var(--red);font-family:var(--font-mono)">${m.valid.toLocaleString()}</td>`;
+    const statusCell = counted
+      ? `<td><span style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(0,229,160,0.12);color:var(--accent);font-weight:600">✓ Counted</span></td>`
+      : `<td><span style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,77,109,0.12);color:var(--red);font-weight:600">✗ Not Counted</span></td>`;
+    return `<tr style="${rowStyle}">${rankCell}${nameCell}<td style="color:var(--text2);font-family:var(--font-mono)">${m.total.toLocaleString()}</td>${validCell}${statusCell}</tr>`;
+  }).join('');
 }
 
 /* ═══════════════════════════════════════════════
