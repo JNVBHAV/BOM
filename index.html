@@ -1,718 +1,2249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
-<!-- ░░ GENERIC META — nothing personal leaks in previews or tab ░░ -->
-<title>F.O.D. 🔒</title>
-<meta name="description"    content="Private. Access required.">
-<meta name="robots"         content="noindex, nofollow">
-<meta property="og:title"       content="🔒 Private Page">
-<meta property="og:description" content="This page is private. Access required.">
-<meta property="og:image"       content="">
-<meta name="twitter:card"       content="summary">
-<meta name="twitter:title"      content="🔒 Private Page">
-
-<!-- Harry Potter Fonts -->
-<link href="https://db.onlinewebfonts.com/c/181ef9a7aee45c119e68f294e8426a3a?family=Harry+P" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>WhatsApp Analyzer + BOM</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
-/* Crimes of Grindelwald — titles */
-@font-face {
-  font-family: 'Crimes of Grindelwald';
-  src: url('https://db.onlinewebfonts.com/t/e4b2e7ec0a58c30fd33a7c0aaf77b75e.woff2') format('woff2'),
-       url('https://db.onlinewebfonts.com/t/e4b2e7ec0a58c30fd33a7c0aaf77b75e.woff') format('woff');
-  font-weight: normal; font-style: normal;
-}
-/* HogwartsWizard — body / context */
-@font-face {
-  font-family: 'HogwartsWizard';
-  src: url('https://www.wfonts.com/download/data/2016/03/14/hogwartswizard/hogww.woff') format('woff');
-  font-weight: normal; font-style: normal;
-}
-</style>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
+/* ═══════════════════════════════════════════════
+   CSS VARIABLES & RESET
+═══════════════════════════════════════════════ */
 :root {
-  --bg:        #060810;
-  --bg2:       #0c1220;
-  --bg3:       #111926;
-  --border:    rgba(255,210,0,0.15);
-  --yellow:    #FFD700;
-  --yellow2:   #fbbf24;
-  --yellow-dim: rgba(255,215,0,0.13);
-  --blue:      #3b82f6;
-  --green:     #22c55e;
-  --red:       #ef4444;
-  --text:      #f1f5f9;
-  --muted:     #64748b;
-  --glass:     rgba(12,18,32,0.75);
-  --mono:      'JetBrains Mono', monospace;
-  --display:   'Harry P', cursive;
-  --titles:    'Crimes of Grindelwald', serif;
-  --body:      'HogwartsWizard', cursive;
-  --glow-y:    0 0 24px rgba(255,215,0,0.45);
+  --bg:        #0a0d12;
+  --bg2:       #111520;
+  --bg3:       #181d2a;
+  --card:      #161b28;
+  --card2:     #1c2235;
+  --border:    #252d42;
+  --border2:   #2e3852;
+  --accent:    #00e5a0;
+  --accent2:   #00bfff;
+  --accent3:   #ff6b35;
+  --gold:      #ffd700;
+  --silver:    #c0c0c0;
+  --bronze:    #cd7f32;
+  --text:      #e8ecf4;
+  --text2:     #8899bb;
+  --text3:     #556080;
+  --green:     #00e5a0;
+  --red:       #ff4d6d;
+  --purple:    #a78bfa;
+  --font-head: 'Rajdhani', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --radius:    12px;
+  --radius2:   20px;
+  --shadow:    0 4px 24px rgba(0,0,0,0.4);
+  --glow:      0 0 20px rgba(0,229,160,0.15);
 }
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 html { scroll-behavior: smooth; }
+
 body {
-  background: var(--bg); color: var(--text);
-  font-family: 'HogwartsWizard', cursive; min-height: 100vh; overflow-x: hidden;
-}
-body.locked { overflow: hidden; }
-body::before {
-  content: ''; position: fixed; inset: 0; z-index: 0;
-  background-image:
-    linear-gradient(rgba(255,215,0,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,215,0,0.03) 1px, transparent 1px);
-  background-size: 48px 48px; pointer-events: none;
-}
-
-/* SCROLL PROGRESS */
-#scroll-bar {
-  position: fixed; top: 0; left: 0; z-index: 9000;
-  height: 3px; width: 0%;
-  background: linear-gradient(90deg, var(--blue), var(--green), var(--yellow), var(--red));
-  transition: width 0.1s; box-shadow: var(--glow-y);
-}
-
-/* ══════ LOCK SCREEN ══════ */
-#lock-screen {
-  position: fixed; inset: 0; z-index: 8000;
+  font-family: var(--font-body);
   background: var(--bg);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.6s ease, transform 0.6s ease; overflow: hidden;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
 }
-#lock-screen.unlock { opacity: 0; transform: scale(1.05); pointer-events: none; }
-#lock-screen::before {
-  content: ''; position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,215,0,0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,215,0,0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
+
+/* ═══════════════════════════════════════════════
+   NOISE TEXTURE OVERLAY
+═══════════════════════════════════════════════ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
 }
-.lock-strips {
-  position: absolute; top: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, var(--blue) 0%, var(--green) 33%, var(--yellow) 60%, var(--red) 100%);
+
+/* ═══════════════════════════════════════════════
+   TOP NAV BAR
+═══════════════════════════════════════════════ */
+#topbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  background: rgba(10,13,18,0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
 }
-.lock-strip-bottom {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 4px;
-  background: linear-gradient(90deg, var(--yellow) 0%, var(--red) 33%, var(--green) 66%, var(--blue) 100%);
+
+#topbar .brand {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.lock-glow {
-  position: absolute; width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(255,215,0,0.07) 0%, transparent 70%);
-  border-radius: 50%; top: 50%; left: 50%;
-  transform: translate(-50%, -50%); pointer-events: none;
-  animation: pulse-glow 4s ease-in-out infinite;
+
+#topbar .brand span { color: var(--text); }
+
+#nav-tabs {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
 }
-@keyframes pulse-glow {
-  0%,100% { transform: translate(-50%,-50%) scale(1); opacity:1; }
-  50%      { transform: translate(-50%,-50%) scale(1.15); opacity:0.6; }
+
+.nav-btn {
+  padding: 6px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text2);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
-.lock-box {
-  position: relative; z-index: 1; background: var(--glass);
-  border: 1px solid rgba(255,215,0,0.2); backdrop-filter: blur(24px);
-  padding: 48px 40px; width: calc(100% - 32px); max-width: 420px;
+
+.nav-btn:hover { color: var(--text); background: var(--card); }
+
+.nav-btn.active {
+  background: var(--card2);
+  border-color: var(--border2);
+  color: var(--accent);
+}
+
+#file-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-left: 12px;
+}
+
+#file-status.loaded { color: var(--accent); }
+
+/* ═══════════════════════════════════════════════
+   MAIN LAYOUT
+═══════════════════════════════════════════════ */
+#app {
+  padding-top: 60px;
+  min-height: 100vh;
+}
+
+.page {
+  display: none;
+  padding: 32px 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeIn 0.3s ease;
+}
+
+.page.active { display: block; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   UPLOAD PAGE
+═══════════════════════════════════════════════ */
+#upload-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
   text-align: center;
-  clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
-}
-.lock-box::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--blue), var(--green), var(--yellow), var(--red));
-}
-.lock-box::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--red), var(--yellow), var(--green), var(--blue));
-}
-.lock-fod-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 4px;
-  color: var(--yellow); text-transform: uppercase; margin-bottom: 10px; opacity: 0.7;
-}
-.lock-quote {
-  font-family: 'HogwartsWizard', cursive; font-size: clamp(13px, 3.5vw, 16px);
-  color: var(--text); line-height: 1.75;
-  margin-bottom: 6px; padding: 0 8px; position: relative;
-}
-.lock-quote::before {
-  content: '"'; font-family: 'Harry P', cursive; font-size: 60px;
-  color: var(--yellow); opacity: 0.15;
-  position: absolute; top: -18px; left: -4px; line-height: 1;
-}
-.lock-quote em { color: var(--yellow); font-style: normal; font-weight: 700; }
-.lock-quote-attr {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 2px;
-  color: var(--muted); text-transform: uppercase; margin-bottom: 28px;
-}
-.lock-divider {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.2), transparent);
-  margin: 0 0 24px;
-}
-.lock-access-label {
-  font-family: var(--mono); font-size: 9px; letter-spacing: 3px;
-  color: var(--muted); text-transform: uppercase; margin-bottom: 12px;
-}
-.lock-input-wrap { position: relative; margin-bottom: 12px; }
-#lock-input {
-  width: 100%; background: rgba(0,0,0,0.45);
-  border: 1px solid rgba(255,215,0,0.18); color: var(--text);
-  font-family: var(--mono); font-size: 14px; letter-spacing: 3px;
-  padding: 14px 48px 14px 18px; outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
-}
-#lock-input:focus {
-  border-color: var(--yellow);
-  box-shadow: 0 0 0 1px rgba(255,215,0,0.25), inset 0 0 20px rgba(255,215,0,0.04);
-}
-#lock-input.shake { border-color: var(--red); animation: shake 0.35s ease; }
-#pw-toggle {
-  position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-  background: none; border: none; color: var(--muted); cursor: pointer;
-  font-size: 16px; padding: 4px; transition: color 0.2s;
-}
-#pw-toggle:hover { color: var(--yellow); }
-#lock-btn {
-  width: 100%; background: transparent; border: 1px solid var(--yellow);
-  color: var(--yellow); font-family: var(--mono); font-size: 11px; font-weight: 700;
-  letter-spacing: 3px; padding: 14px; cursor: pointer; text-transform: uppercase;
-  transition: all 0.25s;
-  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
-  position: relative; overflow: hidden;
-}
-#lock-btn::after {
-  content: ''; position: absolute; inset: 0; background: var(--yellow);
-  transform: translateX(-101%); transition: transform 0.3s ease; z-index: -1;
-}
-#lock-btn:hover { color: #000; box-shadow: var(--glow-y); }
-#lock-btn:hover::after { transform: translateX(0); }
-#lock-error {
-  font-family: var(--mono); font-size: 11px; color: var(--red);
-  letter-spacing: 1px; min-height: 20px; margin-top: 10px;
-}
-.lock-houses { display: flex; justify-content: center; gap: 8px; margin-top: 20px; }
-.house-dot { width: 8px; height: 8px; border-radius: 50%; }
-
-@keyframes shake {
-  0%,100%{transform:translateX(0)} 20%{transform:translateX(-10px)}
-  40%{transform:translateX(10px)} 60%{transform:translateX(-6px)} 80%{transform:translateX(6px)}
+  padding: 32px;
 }
 
-/* ══════ NAVBAR ══════ */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 500; height: 60px;
-  background: rgba(6,8,16,0.9); backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,215,0,0.1);
-  display: flex; align-items: center; padding: 0 40px;
-}
-nav::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--blue) 0 25%, var(--green) 25% 50%, var(--yellow) 50% 75%, var(--red) 75% 100%);
-}
-.nav-logo {
-  font-family: 'Harry P', cursive; font-size: 26px; letter-spacing: 3px; font-weight: 400;
-  background: linear-gradient(90deg, var(--yellow), var(--yellow2));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; flex: 1; white-space: nowrap;
-}
-.nav-links { display: flex; gap: 28px; list-style: none; }
-.nav-links a {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted); text-decoration: none;
-  transition: color 0.2s; position: relative;
-}
-.nav-links a::after {
-  content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
-  height: 1px; background: var(--yellow); transform: scaleX(0); transition: transform 0.2s;
-}
-.nav-links a:hover { color: var(--yellow); }
-.nav-links a:hover::after { transform: scaleX(1); }
-#hamburger {
-  display: none; background: none; border: 1px solid rgba(255,215,0,0.2);
-  color: var(--yellow); width: 36px; height: 36px; cursor: pointer;
-  font-size: 16px; align-items: center; justify-content: center; border-radius: 2px;
+.upload-hero {
+  font-family: var(--font-head);
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--text) 30%, var(--accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* ══════ HERO ══════ */
-#home {
-  position: relative; z-index: 1; min-height: 100vh;
-  display: flex; align-items: center; justify-content: center; padding: 80px 16px 60px;
+.upload-sub {
+  color: var(--text2);
+  font-size: 16px;
+  margin-bottom: 48px;
+  max-width: 480px;
 }
-.hero-glow-1 {
-  position: absolute; width: 700px; height: 700px;
-  background: radial-gradient(circle, rgba(255,215,0,0.07) 0%, transparent 65%);
-  top: -100px; left: -200px; pointer-events: none;
+
+.upload-zone {
+  width: 100%;
+  max-width: 520px;
+  border: 2px dashed var(--border2);
+  border-radius: var(--radius2);
+  padding: 60px 40px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: var(--card);
+  position: relative;
 }
-.hero-glow-2 {
-  position: absolute; width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 65%);
-  bottom: 0; right: -100px; pointer-events: none;
+
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(0,229,160,0.05);
+  box-shadow: var(--glow);
 }
-.hero-card {
-  position: relative; background: var(--glass);
-  border: 1px solid rgba(255,215,0,0.18); backdrop-filter: blur(20px);
-  padding: 52px 44px; max-width: 680px; width: 100%; text-align: center;
-  clip-path: polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px);
-  animation: fadeUp 0.8s ease both;
+
+.upload-icon {
+  font-size: 56px;
+  margin-bottom: 16px;
+  display: block;
 }
-.hero-card::before {
-  content: ''; position: absolute; top: 0; left: 24px; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--blue), var(--green), var(--yellow), var(--red));
+
+.upload-zone h3 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 8px;
 }
-.hero-card::after {
-  content: ''; position: absolute; bottom: 0; left: 0; right: 24px; height: 2px;
-  background: linear-gradient(90deg, var(--yellow), var(--green), var(--blue));
+
+.upload-zone p {
+  color: var(--text2);
+  font-size: 14px;
 }
-.avatar-wrap { position: relative; width: 130px; height: 130px; margin: 0 auto 28px; }
-.avatar-ring {
-  position: absolute; inset: -4px; border-radius: 50%;
-  background: conic-gradient(var(--blue) 0deg, var(--green) 90deg, var(--yellow) 200deg, var(--red) 310deg, var(--blue) 360deg);
-  animation: spin 6s linear infinite;
+
+#file-input { display: none; }
+
+.upload-hint {
+  margin-top: 24px;
+  font-size: 12px;
+  color: var(--text3);
+  font-family: var(--font-mono);
 }
-.avatar-ring-mask { position: absolute; inset: 2px; border-radius: 50%; background: var(--bg2); }
-.avatar-inner {
-  position: absolute; inset: 6px; border-radius: 50%;
-  border: 2px solid rgba(255,215,0,0.2); overflow: hidden;
-  display: flex; align-items: center; justify-content: center;
+
+/* ═══════════════════════════════════════════════
+   PAGE HEADERS
+═══════════════════════════════════════════════ */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
 }
-.avatar-inner img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.hero-badge {
-  font-family: var(--mono); font-size: 10px; letter-spacing: 3px;
-  color: var(--yellow); text-transform: uppercase; margin-bottom: 8px; opacity: 0.85;
+
+.page-title {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
-.hero-name {
-  font-family: 'Harry P', cursive; font-size: clamp(58px, 12vw, 110px);
-  letter-spacing: 4px; line-height: 0.92; font-weight: 400;
-  background: linear-gradient(135deg, var(--yellow) 0%, #fff8dc 45%, var(--yellow2) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text; margin-bottom: 4px;
-  filter: drop-shadow(0 0 22px rgba(255,215,0,0.4));
+
+.page-subtitle {
+  color: var(--text2);
+  font-size: 14px;
+  margin-top: 2px;
 }
-.hero-nick {
-  font-family: 'Harry P', cursive; font-size: clamp(28px, 6vw, 52px);
-  color: var(--yellow); letter-spacing: 2px; margin-bottom: 18px;
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  background: rgba(0,229,160,0.1);
+  color: var(--accent);
+  border: 1px solid rgba(0,229,160,0.2);
+}
+
+/* ═══════════════════════════════════════════════
+   STAT CARDS
+═══════════════════════════════════════════════ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
+.stat-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 22px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.stat-value {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ═══════════════════════════════════════════════
+   SECTION CARDS
+═══════════════════════════════════════════════ */
+.section-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+
+/* ═══════════════════════════════════════════════
+   OVERVIEW — TOP SENDERS TABLE
+═══════════════════════════════════════════════ */
+.sender-list { display: flex; flex-direction: column; gap: 10px; }
+
+.sender-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  transition: background 0.2s;
+}
+
+.sender-row:hover { background: var(--card2); }
+
+.sender-rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  width: 24px;
+  text-align: center;
+}
+
+.sender-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: #000;
+  flex-shrink: 0;
+}
+
+.sender-info { flex: 1; min-width: 0; }
+
+.sender-name {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sender-count {
+  font-size: 11px;
+  color: var(--text2);
+  font-family: var(--font-mono);
+}
+
+.sender-bar-wrap {
+  width: 120px;
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.sender-bar {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  transition: width 0.6s ease;
+}
+
+/* ═══════════════════════════════════════════════
+   BOM LEADERBOARD
+═══════════════════════════════════════════════ */
+.bom-leaderboard { display: flex; flex-direction: column; gap: 12px; }
+
+.bom-row {
+  display: grid;
+  grid-template-columns: 48px 90px 1fr 110px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.bom-row::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--border2);
+  transition: background 0.2s;
+}
+
+.bom-row:hover { border-color: var(--border2); background: var(--card2); }
+.bom-row:hover::before { background: var(--accent); }
+
+.bom-row.rank-1::before { background: var(--gold); }
+.bom-row.rank-2::before { background: var(--silver); }
+.bom-row.rank-3::before { background: var(--bronze); }
+
+.bom-rank {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.bom-rank.r1 { color: var(--gold); }
+.bom-rank.r2 { color: var(--silver); }
+.bom-rank.r3 { color: var(--bronze); }
+.bom-rank.rn { color: var(--text3); font-size: 16px; }
+
+.bom-year {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.bom-year span {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--text3);
   font-weight: 400;
-  text-shadow: 0 0 28px rgba(255,215,0,0.55), 0 2px 10px rgba(0,0,0,0.7);
 }
-.hero-tagline { font-family: 'HogwartsWizard', cursive; font-size: 13.5px; color: var(--muted); letter-spacing: 0.5px; margin-bottom: 28px; line-height: 1.7; }
-.hero-tagline span { color: var(--yellow); font-style: normal; font-weight: 500; }
-.hero-chips { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 32px; }
-.chip {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--mono); font-size: 11px; letter-spacing: 1px;
-  color: var(--muted); background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,215,0,0.15); padding: 6px 14px; border-radius: 2px; transition: all 0.2s;
+
+.bom-members {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.chip:hover { color: var(--yellow); border-color: rgba(255,215,0,0.45); background: var(--yellow-dim); }
-.chip .ci { color: var(--yellow); }
-.chip.udaygiri {
-  background: rgba(255,215,0,0.1); border-color: var(--yellow);
-  color: var(--yellow); box-shadow: var(--glow-y); font-weight: 700;
+
+.bom-member {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
 }
-.hero-line { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,215,0,0.25), transparent); margin: 4px 0 24px; }
-.scroll-hint { font-family: var(--mono); font-size: 10px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; animation: bounce 2s ease infinite; }
-.scroll-hint span { color: var(--yellow); }
-@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
 
-/* ══════ SECTIONS ══════ */
-section { position: relative; z-index: 1; padding: 80px 24px; max-width: 1100px; margin: 0 auto; }
-.section-label {
-  font-family: var(--mono); font-size: 11px; letter-spacing: 4px;
-  color: var(--yellow); text-transform: uppercase; margin-bottom: 8px;
-  display: flex; align-items: center; gap: 12px;
+.bom-member-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
 }
-.section-label::before { content: ''; width: 32px; height: 1px; background: var(--yellow); }
-.section-title { font-family: 'Harry P', cursive; font-size: clamp(32px, 4.5vw, 48px); letter-spacing: 1px; line-height: 1; margin-bottom: 40px; color: var(--text); }
-.section-title span { color: var(--yellow); }
 
-/* ABOUT */
-.about-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-.about-card {
-  background: var(--glass); border: 1px solid rgba(255,215,0,0.1);
-  backdrop-filter: blur(12px); padding: 28px; position: relative; overflow: hidden;
-  transition: all 0.3s; clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
-  animation: fadeUp 0.6s ease both;
+.bom-member-dot.d2 { background: var(--accent2); }
+.bom-member-dot.d3 { background: var(--purple); }
+
+.bom-score-btn {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(0,229,160,0.08);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  white-space: nowrap;
 }
-.about-card:hover { border-color: rgba(255,215,0,0.35); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(255,215,0,0.08); }
-.about-card:nth-child(1) { border-left: 2px solid var(--yellow); }
-.about-card:nth-child(2) { border-left: 2px solid var(--red); }
-.about-card:nth-child(3) { border-left: 2px solid var(--blue); }
-.about-card:nth-child(4) { border-left: 2px solid var(--green); }
-.about-card:nth-child(5) { border-left: 2px solid var(--yellow); }
-.card-icon { font-size: 32px; margin-bottom: 14px; display: block; }
-.card-title { font-family: 'Crimes of Grindelwald', serif; font-size: 17px; letter-spacing: 2px; color: var(--yellow); margin-bottom: 10px; }
-.card-text { font-family: 'HogwartsWizard', cursive; font-size: 14px; line-height: 1.9; color: #94a3b8; }
-.card-text strong { color: var(--text); }
-.card-tag { display: inline-block; margin-top: 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 1px; color: var(--yellow); background: var(--yellow-dim); border: 1px solid rgba(255,215,0,0.2); padding: 3px 10px; }
 
-/* QUOTE */
-.quote-section { padding: 80px 24px; position: relative; z-index: 1; background: linear-gradient(180deg, transparent, rgba(255,215,0,0.02), transparent); border-top: 1px solid rgba(255,215,0,0.1); border-bottom: 1px solid rgba(255,215,0,0.1); }
-.quote-inner { max-width: 800px; margin: 0 auto; text-align: center; position: relative; }
-.quote-mark { font-family: 'HogwartsWizard', cursive; font-size: 140px; line-height: 0.6; color: var(--yellow); opacity: 0.12; display: block; user-select: none; font-style: italic; }
-.quote-text { font-family: 'HogwartsWizard', cursive; font-size: clamp(18px, 2.8vw, 26px); line-height: 1.75; color: var(--text); margin: -20px 0 20px; position: relative; }
-.quote-text em { color: var(--yellow); font-style: normal; font-weight: 700; }
-.quote-attr { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; }
-.quote-line { width: 80px; height: 1px; background: linear-gradient(90deg, transparent, var(--yellow), transparent); margin: 16px auto; }
-
-/* BROTHERHOOD */
-#network { padding: 80px 24px; position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
-.brotherhood-tagline { font-family: var(--mono); font-size: 11px; letter-spacing: 3px; color: var(--muted); text-transform: uppercase; margin-bottom: 40px; display: flex; align-items: center; gap: 16px; }
-.brotherhood-tagline::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(255,215,0,0.2), transparent); }
-.bro-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
-.bro-card { background: var(--glass); border: 1px solid rgba(255,215,0,0.1); backdrop-filter: blur(12px); padding: 28px 20px; text-align: center; position: relative; overflow: hidden; transition: all 0.3s; clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%); }
-.bro-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 16px; height: 2px; background: linear-gradient(90deg, var(--yellow), var(--blue)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s; }
-.bro-card:hover { border-color: rgba(255,215,0,0.35); transform: translateY(-6px); box-shadow: 0 16px 48px rgba(255,215,0,0.08); }
-.bro-card:hover::after { transform: scaleX(1); }
-.bro-avatar { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, var(--bg3), var(--bg2)); border: 2px solid rgba(255,215,0,0.2); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-family: 'Harry P', cursive; font-size: 26px; letter-spacing: 1px; transition: all 0.3s; color: var(--yellow); }
-.bro-card:hover .bro-avatar { border-color: var(--yellow); box-shadow: var(--glow-y); }
-.bro-name { font-family: 'Crimes of Grindelwald', serif; font-size: 18px; font-weight: 400; color: var(--text); letter-spacing: 1px; margin-bottom: 6px; }
-.bro-role { font-size: 12px; color: var(--yellow); font-style: italic; margin-bottom: 10px; }
-.bro-emoji { font-size: 18px; }
-
-/* GALLERY */
-#gallery { padding: 80px 24px; position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; }
-.gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
-.gallery-item { border-radius: 4px; border: 1px solid rgba(255,215,0,0.12); position: relative; overflow: hidden; cursor: pointer; transition: all 0.35s; background: var(--bg3); aspect-ratio: 1; }
-.gallery-item:hover { border-color: var(--yellow); box-shadow: 0 0 28px rgba(255,215,0,0.2); transform: scale(1.03); z-index: 2; }
-.gallery-item:first-child { grid-column: span 1; grid-row: span 1; }
-.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
-.gallery-item img::after { content: "📷"; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 40px; background: var(--bg3); color: var(--muted); }
-.gallery-item:hover img { transform: scale(1.07); }
-.gallery-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,8,16,0.85) 0%, transparent 60%); opacity: 0; transition: opacity 0.3s; display: flex; align-items: flex-end; padding: 16px; }
-.gallery-item:hover .gallery-overlay { opacity: 1; }
-.gallery-overlay-text { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--yellow); }
-
-/* LIGHTBOX */
-#lightbox { position: fixed; inset: 0; z-index: 7000; background: rgba(6,8,16,0.97); backdrop-filter: blur(16px); display: none; align-items: center; justify-content: center; }
-#lightbox.open { display: flex; }
-.lightbox-content { max-width: 92vw; max-height: 92vh; position: relative; text-align: center; }
-.lightbox-content img { max-width: 100%; max-height: 85vh; border: 2px solid rgba(255,215,0,0.25); border-radius: 4px; box-shadow: 0 0 60px rgba(255,215,0,0.15); object-fit: contain; }
-.lightbox-caption { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--yellow); text-transform: uppercase; margin-top: 12px; opacity: 0.8; }
-.lightbox-close { position: absolute; top: -16px; right: -16px; background: var(--bg2); border: 1px solid rgba(255,215,0,0.3); color: var(--yellow); cursor: pointer; width: 36px; height: 36px; font-size: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; z-index: 10; }
-.lightbox-close:hover { background: var(--yellow); color: #000; }
-
-/* FOOTER */
-footer { position: relative; z-index: 1; border-top: 1px solid rgba(255,215,0,0.1); padding: 40px 24px; text-align: center; }
-footer::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--blue) 0 25%, var(--green) 25% 50%, var(--yellow) 50% 75%, var(--red) 75% 100%); }
-.footer-logo { font-family: 'Harry P', cursive; font-size: 26px; letter-spacing: 1px; background: linear-gradient(90deg, var(--yellow), var(--yellow2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
-.footer-sub { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-
-/* ANIMATIONS */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  nav { padding: 0 16px; }
-  .nav-logo { font-size: 13px; letter-spacing: 2px; }
-  .nav-links { display: none; position: fixed; top: 60px; left: 0; right: 0; background: rgba(6,8,16,0.98); border-bottom: 1px solid rgba(255,215,0,0.1); flex-direction: column; gap: 0; padding: 12px 0; }
-  .nav-links.open { display: flex; }
-  .nav-links a { padding: 14px 24px; border-bottom: 1px solid rgba(255,215,0,0.07); }
-  #hamburger { display: flex; }
-  section, #gallery, #network { padding: 56px 16px; }
-  .hero-card { padding: 32px 20px; }
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-  .gallery-item:first-child { grid-column: span 1; grid-row: span 1; }
-  .lock-box { padding: 36px 22px; }
-  .quote-section { padding: 56px 20px; }
-  .about-grid { grid-template-columns: 1fr; }
-  .bro-grid { grid-template-columns: repeat(2, 1fr); }
-  .lightbox-close { top: 4px; right: 4px; }
+.bom-score-btn:hover {
+  background: rgba(0,229,160,0.18);
+  box-shadow: 0 0 16px rgba(0,229,160,0.2);
+  transform: scale(1.04);
 }
-@media (max-width: 480px) {
-  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
-  .gallery-item:first-child { grid-column: span 1; grid-row: span 1; }
-  .bro-grid { grid-template-columns: 1fr; }
-  .nav-logo { font-size: 11px; letter-spacing: 1px; }
+
+.bom-score-btn.zero { color: var(--text3); background: transparent; border-color: transparent; cursor: default; }
+.bom-score-btn.zero:hover { transform: none; box-shadow: none; }
+
+/* ═══════════════════════════════════════════════
+   BATCH DETAIL PAGE
+═══════════════════════════════════════════════ */
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text2);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 24px;
 }
+
+.back-btn:hover { color: var(--text); border-color: var(--border2); }
+
+.detail-score-panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.detail-score-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  text-align: center;
+}
+
+.detail-score-card .dsc-icon { font-size: 26px; margin-bottom: 8px; }
+.detail-score-card .dsc-value {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.detail-score-card.total .dsc-value { color: var(--gold); font-size: 40px; }
+.detail-score-card .dsc-label { font-size: 12px; color: var(--text2); margin-top: 4px; font-weight: 500; }
+
+.view-msgs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #000;
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.view-msgs-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,229,160,0.3);
+}
+
+/* ═══════════════════════════════════════════════
+   MEMBER TABLE
+═══════════════════════════════════════════════ */
+.member-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.member-table th {
+  text-align: left;
+  padding: 10px 14px;
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+}
+
+.member-table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(37,45,66,0.5);
+  color: var(--text2);
+}
+
+.member-table tr:last-child td { border-bottom: none; }
+.member-table td:first-child { color: var(--text3); font-family: var(--font-mono); font-size: 12px; }
+.member-table td:nth-child(2) { color: var(--text); font-weight: 500; }
+.member-table td:nth-child(3) { color: var(--accent); font-family: var(--font-mono); font-weight: 500; }
+
+/* ═══════════════════════════════════════════════
+   CHAT EXPLORER
+═══════════════════════════════════════════════ */
+.chat-summary-bar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.chat-stat-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chat-stat-pill.total { background: rgba(139,153,187,0.1); color: var(--text2); border: 1px solid var(--border); }
+.chat-stat-pill.valid { background: rgba(0,229,160,0.1); color: var(--green); border: 1px solid rgba(0,229,160,0.2); }
+.chat-stat-pill.invalid { background: rgba(255,77,109,0.1); color: var(--red); border: 1px solid rgba(255,77,109,0.2); }
+
+.chat-bubbles {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 600px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.chat-bubbles::-webkit-scrollbar { width: 4px; }
+.chat-bubbles::-webkit-scrollbar-track { background: transparent; }
+.chat-bubbles::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+.bubble-wrap {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: bubbleIn 0.2s ease;
+}
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.bubble-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  color: #000;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 8px 12px;
+  border-radius: 12px 12px 12px 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  position: relative;
+}
+
+.bubble.valid {
+  background: var(--card2);
+  border: 1px solid rgba(0,229,160,0.15);
+}
+
+.bubble.invalid {
+  background: rgba(255,77,109,0.07);
+  border: 1px solid rgba(255,77,109,0.15);
+  opacity: 0.75;
+}
+
+.bubble-sender {
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 3px;
+  color: var(--accent);
+}
+
+.bubble-text { color: var(--text); }
+
+.bubble-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+
+.bubble-time {
+  font-size: 10px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+.bubble-tag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+.bubble-tag.v { background: rgba(0,229,160,0.15); color: var(--green); }
+.bubble-tag.i { background: rgba(255,77,109,0.15); color: var(--red); }
+
+/* ═══════════════════════════════════════════════
+   HOUR CHART (OVERVIEW)
+═══════════════════════════════════════════════ */
+.hour-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 80px;
+  padding-top: 8px;
+}
+
+.hour-bar-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  justify-content: flex-end;
+}
+
+.hour-bar {
+  width: 100%;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(to top, var(--accent), rgba(0,229,160,0.4));
+  transition: height 0.6s cubic-bezier(0.34,1.56,0.64,1);
+  min-height: 2px;
+}
+
+.hour-label {
+  font-size: 9px;
+  color: var(--text3);
+  font-family: var(--font-mono);
+}
+
+/* ═══════════════════════════════════════════════
+   LOADING STATE
+═══════════════════════════════════════════════ */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  flex-direction: column;
+  gap: 16px;
+  color: var(--text2);
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════
+   EMPTY STATE
+═══════════════════════════════════════════════ */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text3);
+}
+
+.empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — TABLET  (≤ 900px)
+═══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  /* overview two-column grid → single column */
+  .overview-cols {
+    grid-template-columns: 1fr !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .detail-score-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE — MOBILE  (≤ 640px)
+═══════════════════════════════════════════════ */
+@media (max-width: 640px) {
+
+  /* ── Topbar ── */
+  #topbar {
+    padding: 0 12px;
+    gap: 8px;
+    height: 54px;
+  }
+
+  #topbar .brand { font-size: 16px; }
+
+  #nav-tabs { gap: 2px; }
+
+  .nav-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 4px;
+    min-height: 36px;
+  }
+
+  /* hide text label, keep emoji on very small screens */
+  /* handled by standalone @media (max-width: 380px) below */
+
+  #file-status {
+    display: none; /* moves to page subtitle on mobile */
+  }
+
+  /* ── App shell ── */
+  #app { padding-top: 54px; }
+
+  .page {
+    padding: 16px 12px;
+  }
+
+  /* ── Upload page ── */
+  #upload-page { padding: 24px 16px; }
+
+  .upload-hero { font-size: clamp(32px, 10vw, 52px); }
+
+  .upload-sub {
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  .upload-zone {
+    padding: 36px 20px;
+  }
+
+  .upload-icon { font-size: 40px; }
+
+  .upload-zone h3 { font-size: 18px; }
+
+  /* ── Page header ── */
+  .page-header {
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-size: clamp(20px, 6vw, 28px);
+  }
+
+  .page-subtitle {
+    font-size: 12px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+
+  /* ── Stats grid → 2 columns on phone ── */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .stat-card { padding: 14px 12px; }
+  .stat-icon { font-size: 18px; margin-bottom: 6px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+
+  /* ── Section cards ── */
+  .section-card {
+    padding: 16px 14px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+  }
+
+  .section-title { font-size: 15px; margin-bottom: 14px; }
+
+  /* ── Overview columns → single stack ── */
+  .overview-cols {
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+  }
+
+  /* ── Sender rows ── */
+  .sender-row { padding: 9px 10px; gap: 8px; }
+  .sender-name { font-size: 12px; }
+  .sender-count { font-size: 10px; }
+  .sender-bar-wrap { width: 64px; }
+  .sender-avatar { width: 30px; height: 30px; font-size: 12px; }
+
+  /* ── BOM leaderboard rows ── */
+  .bom-row {
+    /* stack: [rank + year] on one line, members below, score below */
+    grid-template-columns: 40px 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 6px 10px;
+    padding: 12px 12px 12px 16px;
+  }
+
+  .bom-rank { font-size: 18px; }
+  .bom-rank.rn { font-size: 14px; }
+
+  .bom-year { font-size: 16px; }
+  .bom-year span { font-size: 10px; }
+
+  /* members row spans full width below rank+year */
+  .bom-members {
+    grid-column: 1 / -1;
+    gap: 3px;
+  }
+
+  .bom-member { font-size: 11px; }
+
+  /* score button: always visible on mobile, smaller */
+  .bom-score-btn {
+    display: block;
+    font-size: 16px;
+    padding: 6px 10px;
+    min-height: 36px;
+    white-space: nowrap;
+  }
+
+  /* ── Back button ── */
+  .back-btn {
+    padding: 10px 14px;
+    font-size: 13px;
+    min-height: 44px;
+    margin-bottom: 16px;
+  }
+
+  /* ── Detail score panel → 2 col ── */
+  .detail-score-panel {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .detail-score-card { padding: 14px 10px; }
+  .detail-score-card .dsc-icon { font-size: 20px; margin-bottom: 6px; }
+  .detail-score-card .dsc-value { font-size: 24px; }
+  .detail-score-card.total .dsc-value { font-size: 30px; }
+  .detail-score-card .dsc-label { font-size: 10px; }
+
+  /* ── View messages button ── */
+  .view-msgs-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    font-size: 15px;
+    padding: 12px 20px;
+  }
+
+  /* ── Member table ── */
+  .member-table { font-size: 12px; }
+  .member-table th { padding: 8px 10px; font-size: 10px; }
+  .member-table td { padding: 9px 10px; }
+
+  /* ── Chat summary pills ── */
+  .chat-summary-bar { gap: 8px; }
+  .chat-stat-pill { font-size: 11px; padding: 6px 12px; }
+
+  /* ── Chat bubbles ── */
+  .chat-bubbles {
+    max-height: calc(100vh - 280px);
+    gap: 10px;
+  }
+
+  .bubble-avatar { width: 26px; height: 26px; font-size: 10px; }
+
+  .bubble {
+    max-width: 85%;          /* wider on small screens */
+    font-size: 13px;
+    padding: 8px 10px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .bubble-sender { font-size: 10px; }
+  .bubble-text { font-size: 13px; line-height: 1.45; }
+  .bubble-time { font-size: 9px; }
+  .bubble-tag { font-size: 8px; }
+
+  .bubble-meta { flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+
+  /* ── Hour chart ── */
+  .hour-chart { height: 64px; gap: 2px; }
+  .hour-label { font-size: 8px; }
+}
+
+/* Hide nav label text on very small screens, keep emoji */
+@media (max-width: 380px) {
+  .nav-btn .nav-label { display: none; }
+}
+
+/* ═══════════════════════════════════════════════
+   BATCH 2025 SPOTLIGHT CARD
+═══════════════════════════════════════════════ */
+.squad-card {
+  background: linear-gradient(135deg, rgba(0,229,160,0.07) 0%, rgba(0,191,255,0.05) 100%);
+  border: 1px solid rgba(0,229,160,0.25);
+  border-radius: var(--radius2);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.squad-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+}
+.squad-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.squad-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+.squad-title span {
+  display: block;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text3);
+  margin-top: 3px;
+}
+.squad-score-pill {
+  margin-left: auto;
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(0,229,160,0.1);
+  border: 1px solid rgba(0,229,160,0.2);
+  border-radius: 12px;
+  padding: 6px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.2;
+  text-align: center;
+}
+.squad-score-pill:hover {
+  background: rgba(0,229,160,0.2);
+  box-shadow: 0 0 20px rgba(0,229,160,0.25);
+  transform: scale(1.03);
+}
+.squad-score-pill small {
+  display: block;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  color: var(--text3);
+  letter-spacing: 0.3px;
+}
+.squad-score-pill.zero { color: var(--text3); background: transparent; border-color: transparent; cursor: default; }
+.squad-score-pill.zero:hover { transform: none; box-shadow: none; }
+.squad-meta {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.squad-meta-item { display: flex; flex-direction: column; gap: 2px; }
+.squad-meta-item .smi-val {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+}
+.squad-meta-item .smi-lbl {
+  font-size: 10px;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.squad-members {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.squad-member-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--card2);
+  border: 1px solid var(--border2);
+  font-size: 12px;
+  color: var(--text2);
+}
+.squad-member-chip .chip-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0;
+}
+.squad-member-chip .chip-dot.d2 { background: var(--accent2); }
+.squad-member-chip .chip-dot.d3 { background: var(--purple); }
+.squad-member-chip .chip-count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+@media (max-width: 640px) {
+  .squad-card { padding: 14px; }
+  .squad-title { font-size: 18px; }
+  .squad-score-pill { font-size: 22px; padding: 5px 14px; }
+  .squad-meta { gap: 14px; }
+  .squad-meta-item .smi-val { font-size: 15px; }
+}
+
+/* ═══════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════ */
+.flex-row { display: flex; align-items: center; gap: 12px; }
+.ml-auto { margin-left: auto; }
+.text-mono { font-family: var(--font-mono); }
+.text-accent { color: var(--accent); }
+.text-muted { color: var(--text2); }
+.divider { height: 1px; background: var(--border); margin: 24px 0; }
 </style>
 </head>
-<body class="locked">
+<body>
 
-<div id="scroll-bar"></div>
+<!-- ═══════════════════════ TOP BAR ═══════════════════════ -->
+<div id="topbar">
+  <div class="brand">📊 <span>WA</span>Analyzer</div>
 
-<!-- LOCK SCREEN -->
-<div id="lock-screen">
-  <div class="lock-strips"></div>
-  <div class="lock-strip-bottom"></div>
-  <div class="lock-glow"></div>
-  <div class="lock-box">
-    <div class="lock-fod-label">⭐ Today's F.O.D.</div>
-    <div class="lock-quote" id="fod-quote"></div>
-    <div class="lock-quote-attr" id="fod-attr"></div>
-    <div class="lock-divider"></div>
-    <div class="lock-access-label">🔒 Private Access Required</div>
-    <div class="lock-input-wrap">
-      <input type="password" id="lock-input" placeholder="Enter Password"
-             autocomplete="off" onkeydown="if(event.key==='Enter')unlock()">
-      <button id="pw-toggle" onclick="togglePw()">👁</button>
-    </div>
-    <button id="lock-btn" onclick="unlock()">UNLOCK ACCESS →</button>
-    <div id="lock-error"></div>
-    <div class="lock-houses">
-      <div class="house-dot" style="background:var(--blue)"></div>
-      <div class="house-dot" style="background:var(--green)"></div>
-      <div class="house-dot" style="background:var(--yellow);transform:scale(1.6);box-shadow:0 0 8px rgba(255,215,0,0.6)"></div>
-      <div class="house-dot" style="background:var(--red)"></div>
-    </div>
+  <div id="nav-tabs" style="display:none">
+    <button class="nav-btn active" onclick="showPage('overview')">📈 <span class="nav-label">Overview</span></button>
+    <button class="nav-btn" onclick="openBOM()">🔥 <span class="nav-label">BOM</span></button>
   </div>
+
+  <span id="file-status">No file loaded</span>
 </div>
 
-<!-- MAIN CONTENT — hidden until unlocked via CSS, but also gated by JS -->
-<div id="main-content" style="display:none;">
+<!-- ═══════════════════════ APP ═══════════════════════ -->
+<div id="app">
 
-<!-- NAVBAR -->
-<nav>
-  <div class="nav-logo">BHARGAV SIDDHAPURA</div>
-  <button id="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
-  <ul class="nav-links">
-    <li><a href="#home" onclick="closeMobileNav()">Home</a></li>
-    <li><a href="#about" onclick="closeMobileNav()">About</a></li>
-    <li><a href="#gallery" onclick="closeMobileNav()">Gallery</a></li>
-    <li><a href="#network" onclick="closeMobileNav()">Network</a></li>
-  </ul>
-</nav>
+  <!-- ── UPLOAD PAGE ── -->
+  <div id="upload-page" style="display:flex">
+    <div class="upload-hero">WhatsApp<br/>Analyzer</div>
+    <p class="upload-sub">Drop your exported WhatsApp chat (.txt) to unlock analytics &amp; the 🔥 BOM competition system.</p>
 
-<!-- HERO -->
-<section id="home" style="max-width:100%;padding-top:80px;">
-  <div class="hero-glow-1"></div>
-  <div class="hero-glow-2"></div>
-  <div style="display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 80px);">
-    <div class="hero-card">
-      <div class="avatar-wrap">
-        <div class="avatar-ring"></div>
-        <div class="avatar-ring-mask"></div>
-        <div class="avatar-inner">
-          <img src="bs1.jpeg" alt="Profile">
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('file-input').click()">
+      <span class="upload-icon">💬</span>
+      <h3>Drop chat file here</h3>
+      <p>or click to browse</p>
+    </div>
+    <input type="file" id="file-input" accept=".txt" />
+
+    <p class="upload-hint">WhatsApp → Chat → Export Chat (without media) → .txt file</p>
+  </div>
+
+  <!-- ── OVERVIEW PAGE ── -->
+  <div class="page" id="overview-page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">📈 Overview</div>
+        <div class="page-subtitle" id="overview-subtitle">Analyzing chat data…</div>
+      </div>
+      <span class="badge ml-auto" id="msg-count-badge">0 msgs</span>
+    </div>
+
+    <!-- stats cards -->
+    <div class="stats-grid" id="overview-stats"></div>
+
+    <div class="overview-cols" style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <!-- top senders -->
+      <div class="section-card">
+        <div class="section-title">👥 Top Senders</div>
+        <div class="sender-list" id="top-senders-list"></div>
+      </div>
+
+      <!-- activity chart -->
+      <div class="section-card">
+        <div class="section-title">🕐 Hourly Activity</div>
+        <div class="hour-chart" id="hour-chart"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:10px;color:var(--text3);font-family:var(--font-mono)">
+          <span>12 AM</span><span>6 AM</span><span>12 PM</span><span>6 PM</span><span>11 PM</span>
         </div>
       </div>
-      <div class="hero-badge">// Batch 2015 · JNV Bhavnagar · Udaygiri House</div>
-      <div class="hero-name">Bhargav<br>Siddhapura</div>
-      <div class="hero-nick">🍋 &nbsp; "Limbu" &nbsp; 🍋</div>
-      <div class="hero-tagline"><span>Die Manufacturer &amp; 3D Printing Entrepreneur</span><br><span style="color:var(--muted);font-size:13px;font-weight:400">Runs his own manufacturing unit in Bhavnagar — crafting industrial press-tool dies &amp; turning ideas into 3D-printed products</span></div>
-      <div class="hero-line"></div>
-      <div class="hero-chips">
-        <div class="chip udaygiri"><span class="ci">⭐</span> House: Udaygiri</div>
-        <div class="chip"><span class="ci">🌍</span> Bhavnagar, Gujarat</div>
-        <div class="chip"><span class="ci">⚙️</span> Profession: Die Manufacturer</div>
-        <div class="chip"><span class="ci">🖨️</span> Entrepreneur: 3D Printing</div>
-        <div class="chip"><span class="ci">🎓</span> Batch 2015</div>
-        <div class="chip"><span class="ci">🏸</span> Badminton · TT</div>
+    </div>
+  </div>
+
+  <!-- ── BOM PAGE ── -->
+  <div class="page" id="bom-page">
+    <div class="page-header">
+      <div>
+        <div class="page-title">🔥 Batch Of Month</div>
+        <div class="page-subtitle">Click a score to drill down into batch details</div>
       </div>
-      <div class="scroll-hint">Scroll to explore <span>↓</span></div>
     </div>
-  </div>
-</section>
 
-<!-- ABOUT -->
-<section id="about">
-  <div class="section-label">Chapter 01</div>
-  <div class="section-title">The <span>Story</span></div>
-  <div class="about-grid">
-    <div class="about-card">
-      <span class="card-icon">🔭</span>
-      <div class="card-title">The Quiet Observer</div>
-      <div class="card-text">Short-term memory loss hoy pan <strong>Bhargav bhai badhu 'observe' kare che!</strong> He remembers more than he shows — a silent strategist in the making. 🧐</div>
-      <span class="card-tag"># Observe · Analyse · Execute</span>
-    </div>
-    <div class="about-card">
-      <span class="card-icon">🍛</span>
-      <div class="card-title">The Foodie Legend</div>
-      <div class="card-text">Amara Group no unbeatable record! <strong>April 2014 ma, thanks to IPL, continuous 30 divas sudhi Kirpal Dhaba nu jamvanu khadhu hatu.</strong> A true foodie achievement! 😋🏏</div>
-      <span class="card-tag"># 30 Days · IPL · Kirpal Dhaba</span>
-    </div>
-    <div class="about-card">
-      <span class="card-icon">🖨️</span>
-      <div class="card-title">The Creator</div>
-      <div class="card-text">Jya lokon ne ideas aave, tya <strong>Bhargav bhai 3D Printing thi e ideas ne 'Real Product' banavi de che.</strong> Designing is his passion and profession. 🖨️⚙️</div>
-      <span class="card-tag"># 3D Printing · Die Manufacturing</span>
-    </div>
-    <div class="about-card">
-      <span class="card-icon">🏫</span>
-      <div class="card-title">JNV Training Ground</div>
-      <div class="card-text">Emna mate <strong>JNV khali school nathi, pan life training ground hati.</strong> Discipline, struggle, ane confidence — badhu j tya thi shikhyu che.</div>
-      <span class="card-tag"># JNV Bhavnagar · Discipline · Brotherhood</span>
-    </div>
-    <div class="about-card">
-      <span class="card-icon">🏸</span>
-      <div class="card-title">Sports Spirit</div>
-      <div class="card-text">Always ready to defeat anyone in <strong>Badminton and Table Tennis.</strong> Pan life ni game ma toh e expert che j! 🏸🏓</div>
-      <span class="card-tag"># Badminton · Table Tennis</span>
-    </div>
-  </div>
-</section>
+    <div class="stats-grid" id="bom-stats"></div>
 
-<!-- QUOTE -->
-<div class="quote-section">
-  <div class="quote-inner">
-    <span class="quote-mark">"</span>
-    <div class="quote-text">JNV memories describe karvi e <em>'Speaking magic to Muggles'</em> jevu che —<br>badha ne khabar na pade, pan <em>jene khabar che emne badhu j khabar che!</em></div>
-    <div class="quote-line"></div>
-    <div class="quote-attr">— Bhargav "Limbu" Siddhapura · Batch 2015 · JNV Bhavnagar</div>
+    <div id="squad-2025-card"></div>
+
+    <div class="section-card">
+      <div class="section-title">🏆 BOM Leaderboard <span id="bom-period-badge" class="badge" style="font-size:10px"></span></div>
+      <div class="bom-leaderboard" id="bom-leaderboard"></div>
+    </div>
   </div>
+
+  <!-- ── BATCH DETAIL PAGE ── -->
+  <div class="page" id="detail-page">
+    <button class="back-btn" onclick="goBack()">← Back to BOM</button>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title" id="detail-title">Batch 2012</div>
+        <div class="page-subtitle" id="detail-subtitle">Score breakdown</div>
+      </div>
+    </div>
+
+    <div class="detail-score-panel" id="detail-score-panel"></div>
+
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:28px;flex-wrap:wrap">
+      <button class="view-msgs-btn" onclick="openBatchChat()">💬 View Messages</button>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">👥 Batch Members</div>
+      <table class="member-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Name</th><th>Messages</th><th>Valid</th><th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="detail-members"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── CHAT EXPLORER PAGE ── -->
+  <div class="page" id="chat-page">
+    <button class="back-btn" onclick="goToDetail()">← Back to Batch Detail</button>
+
+    <div class="page-header">
+      <div>
+        <div class="page-title" id="chat-title">💬 Chat Explorer</div>
+        <div class="page-subtitle" id="chat-subtitle">Messages from batch members</div>
+      </div>
+    </div>
+
+    <div class="chat-summary-bar" id="chat-summary"></div>
+
+    <div class="section-card" style="padding:16px">
+      <div class="chat-bubbles" id="chat-bubbles"></div>
+    </div>
+  </div>
+
 </div>
 
-<!-- BROTHERHOOD -->
-<section id="network">
-  <div class="section-label">Chapter 02</div>
-  <div class="section-title">The <span>Brotherhood</span></div>
-  <div class="brotherhood-tagline">The ones who made JNV what it was</div>
-  <div class="bro-grid">
-    <div class="bro-card"><div class="bro-avatar">LJ</div><div class="bro-name">Lalit Jani</div><div class="bro-role">Best Friend</div><div class="bro-emoji">🔑</div></div>
-    <div class="bro-card"><div class="bro-avatar">SS</div><div class="bro-name">Santosh Sangada</div><div class="bro-role">Darling</div><div class="bro-emoji">💪</div></div>
-    <div class="bro-card"><div class="bro-avatar">JM</div><div class="bro-name">Jignesh Makwana</div><div class="bro-role">Brother</div><div class="bro-emoji">🔥</div></div>
-    <div class="bro-card"><div class="bro-avatar">SC</div><div class="bro-name">Sachin Chawda</div><div class="bro-role">Brother</div><div class="bro-emoji">⚡</div></div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section id="gallery">
-  <div class="section-label">Chapter 03</div>
-  <div class="section-title">JNV <span>Memories</span></div>
-  <div class="gallery-grid">
-    <div class="gallery-item" onclick="openLightbox('bs2.jpeg','Coastal Wanderer')">
-      <img src="bs2.jpeg" alt="By the Sea" onerror="this.style.display='none';this.parentElement.querySelector('.img-placeholder').style.display='flex'">
-      <div class="img-placeholder" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:var(--bg3);color:var(--muted)"><span style="font-size:36px">🌊</span><span style="font-family:var(--mono);font-size:10px;letter-spacing:1px">By the Sea</span></div>
-      <div class="gallery-overlay"><span class="gallery-overlay-text">🌊 By the Sea →</span></div>
-    </div>
-    <div class="gallery-item" onclick="openLightbox('bs3.jpeg','JNV Classroom · 2014')">
-      <img src="bs3.jpeg" alt="" onerror="this.style.display='none';this.parentElement.querySelector('.img-placeholder').style.display='flex'">
-      <div class="img-placeholder" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:var(--bg3);color:var(--muted)"><span style="font-size:36px">📚</span><span style="font-family:var(--mono);font-size:10px;letter-spacing:1px">JNV Classroom</span></div>
-      <div class="gallery-overlay"><span class="gallery-overlay-text">📚 JNV Classroom →</span></div>
-    </div>
-    <div class="gallery-item" onclick="openLightbox('bs4.jpeg','Sports Ground')">
-      <img src="bs4.jpeg" alt="" onerror="this.style.display='none';this.parentElement.querySelector('.img-placeholder').style.display='flex'">
-      <div class="img-placeholder" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:var(--bg3);color:var(--muted)"><span style="font-size:36px">🏟️</span><span style="font-family:var(--mono);font-size:10px;letter-spacing:1px">Sports Ground</span></div>
-      <div class="gallery-overlay"><span class="gallery-overlay-text">🏟️ Sports Ground →</span></div>
-    </div>
-    <div class="gallery-item" onclick="openLightbox('bs5.jpeg','Suited Up')">
-      <img src="bs5.jpeg" alt="" onerror="this.style.display='none';this.parentElement.querySelector('.img-placeholder').style.display='flex'">
-      <div class="img-placeholder" style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:8px;background:var(--bg3);color:var(--muted)"><span style="font-size:36px">👔</span><span style="font-family:var(--mono);font-size:10px;letter-spacing:1px">Suited Up</span></div>
-      <div class="gallery-overlay"><span class="gallery-overlay-text">👔 All Dressed Up →</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- LIGHTBOX -->
-<div id="lightbox" onclick="if(event.target===this)closeLightbox()">
-  <div class="lightbox-content">
-    <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-    <img id="lb-img" src="" alt="">
-    <div class="lightbox-caption" id="lb-cap"></div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-logo">BHARGAV SIDDHAPURA</div>
-  <div class="footer-sub">🍋 Limbu · Batch 2015 · JNV Bhavnagar · The Resilient Maker</div>
-</footer>
-
-</div><!-- end #main-content -->
-
+<!-- ═══════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-/* ── FOD daily quotes ── */
-var _q=[
-  ["Some people leave JNV. JNV never leaves them.","— The Hostel Walls"],
-  ["He didn't just survive the system — he quietly outpaced it.","— Udaygiri House"],
-  ["The strongest bond isn't blood. It's shared mess food at 7 AM.","— Batch 2015"],
-  ["Discipline is what happens after the dreams. He had both.","— JNV Bhavnagar"],
-  ["You don't know a person until you've lived in a room of 20.","— Hostel Block B"],
-  ["Every great maker started somewhere unremarkable. He started here.","— 2015"],
-  ["The roll call ends. The story never does.","— JNV Chronicles"]
-];
-(function(){
-  var d=new Date(),i=(d.getFullYear()*366+d.getMonth()*31+d.getDate())%_q.length;
-  document.getElementById("fod-quote").textContent=_q[i][0];
-  document.getElementById("fod-attr").textContent=_q[i][1];
-})();
+/* ═══════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════ */
+const state = {
+  view: 'upload',        // upload | overview | bom | detail | chat
+  selectedBatch: null,   // batch object
+  prevView: 'bom',       // for back navigation
+};
 
-/* ── Auth via SHA-256 — password never stored in plain form ── */
-async function _verify(v){
-  var enc=new TextEncoder(),buf=await crypto.subtle.digest("SHA-256",enc.encode(v));
-  var hex=Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,"0");}).join("");
-  return hex==="3d3f6b55c26e28651f04af83c1d820a9e515c9746561085a325f0a8cc4c88ebb";
-}
+/* ═══════════════════════════════════════════════
+   DATA STORE
+═══════════════════════════════════════════════ */
+let rawMessages      = [];   // all parsed messages
+let validMessages    = [];   // filtered valid messages (all months)
+let bomValidMessages = [];   // BOM-specific: April-only valid messages
+let batchData        = {};   // { year: { members, score, ... } }
+let senderStats      = {};   // { name: count }
+let BOM_MONTH        = 4;    // April = month 4 (1-indexed)
 
-function togglePw(){
-  var i=document.getElementById("lock-input");
-  i.type=i.type==="password"?"text":"password";
-}
+/* ═══════════════════════════════════════════════
+   SPAM / INVALID FILTER LIST
+═══════════════════════════════════════════════ */
+const SPAM_PHRASES = new Set([
+  'hi','hello','ok','okay','yes','no','k','hm','hmm',
+  'good morning','good night','gm','gn','goodnight',
+  'good morning!','good night!','👍','🙏','ok ok',
+  'haha','lol','bye','thanks','thank you','ty',
+]);
 
-function unlock(){
-  var inp=document.getElementById("lock-input"),
-      err=document.getElementById("lock-error"),
-      val=inp.value;
-  if(!val){err.textContent="✗ Enter a password.";return;}
-  _verify(val).then(function(ok){
-    if(ok){
-      try{sessionStorage.setItem("_s","1");}catch(e){}
-      document.getElementById("lock-screen").classList.add("unlock");
-      document.body.classList.remove("locked");
-      document.getElementById("main-content").style.display="block";
-      document.title="F.O.D. — Unlocked ⭐";
-      setTimeout(function(){document.getElementById("lock-screen").style.display="none";},700);
-      err.textContent="";
-      _initScroll();
-      _initReveal();
-    } else {
-      inp.classList.remove("shake");
-      void inp.offsetWidth;
-      inp.classList.add("shake");
-      err.textContent="✗ Incorrect. Try again.";
-      inp.value="";
-      setTimeout(function(){inp.classList.remove("shake");},400);
+/* ═══════════════════════════════════════════════
+   1. PARSE WHATSAPP EXPORT
+   Supports both formats:
+   [DD/MM/YYYY, HH:MM] Name: message
+   DD/MM/YYYY, HH:MM - Name: message
+═══════════════════════════════════════════════ */
+function parseChatFile(text) {
+  const lines = text.split('\n');
+  const msgs  = [];
+
+  // Two common WhatsApp export patterns
+  const RE = [
+    // [DD/MM/YYYY, HH:MM:SS AM/PM] Sender: msg
+    /^\[(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s?[AP]M)?)\]\s+([^:]+):\s+(.*)/i,
+    // DD/MM/YYYY, HH:MM - Sender: msg
+    /^(\d{1,2}\/\d{1,2}\/\d{2,4}),\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s?[AP]M)?)\s+-\s+([^:]+):\s+(.*)/i,
+    // M/D/YY format
+    /^(\d{1,2}\/\d{1,2}\/\d{2}),\s+(\d{1,2}:\d{2}\s?[AP]M)\s+-\s+([^:]+):\s+(.*)/i,
+  ];
+
+  let current = null;
+
+  for (const line of lines) {
+    let matched = false;
+
+    for (const re of RE) {
+      const m = line.match(re);
+      if (m) {
+        if (current) msgs.push(current);
+
+        const dateStr = m[1];
+        const timeStr = m[2].trim();
+        const sender  = m[3].trim();
+        const content = m[4].trim();
+
+        // Parse hour for activity chart
+        let hour = 0;
+        const hMatch = timeStr.match(/(\d{1,2}):(\d{2})(?::\d{2})?\s*([AP]M)?/i);
+        if (hMatch) {
+          hour = parseInt(hMatch[1]);
+          const ampm = hMatch[3];
+          if (ampm) {
+            if (ampm.toUpperCase() === 'PM' && hour !== 12) hour += 12;
+            if (ampm.toUpperCase() === 'AM' && hour === 12) hour  = 0;
+          }
+        }
+
+        current = { sender, content, dateStr, timeStr, hour };
+        matched = true;
+        break;
+      }
     }
-  });
-}
 
-/* ── Auto-unlock if session active ── */
-(function(){
-  try{
-    if(sessionStorage.getItem("_s")==="1"){
-      document.getElementById("lock-screen").style.display="none";
-      document.body.classList.remove("locked");
-      document.getElementById("main-content").style.display="block";
-      document.title="F.O.D. — Unlocked ⭐";
-      _initScroll();
-      _initReveal();
+    // Continuation line
+    if (!matched && current) {
+      current.content += ' ' + line.trim();
     }
-  }catch(e){}
-})();
+  }
 
-function _initScroll(){
-  window.addEventListener("scroll",function(){
-    var d=document.documentElement;
-    document.getElementById("scroll-bar").style.width=
-      (d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+"%";
-  },{passive:true});
+  if (current) msgs.push(current);
+  return msgs;
 }
 
-function _initReveal(){
-  var obs=new IntersectionObserver(function(entries){
-    entries.forEach(function(e){
-      if(e.isIntersecting){e.target.style.opacity="1";e.target.style.animation="fadeUp 0.7s ease both";}
-    });
-  },{threshold:0.08});
-  document.querySelectorAll(".about-card,.bro-card,.gallery-item").forEach(function(el){
-    el.style.opacity="0";obs.observe(el);
+/* ═══════════════════════════════════════════════
+   2. VALID MESSAGE FILTER
+   Count ONLY:
+   - Time 6 AM–10 PM
+   - Length > 3 chars
+   - Not in spam list
+   - Not system messages
+═══════════════════════════════════════════════ */
+function isValidMessage(msg) {
+  // Hour window 6–22
+  if (msg.hour < 6 || msg.hour >= 22) return false;
+
+  const text = msg.content.trim();
+
+  // Length > 3
+  if (text.length <= 3) return false;
+
+  // System message patterns
+  const systemPatterns = [
+    /Messages and calls are end-to-end encrypted/i,
+    /created group/i,
+    /added/i,
+    /left/i,
+    /changed the subject/i,
+    /changed this group/i,
+    /\<Media omitted\>/i,
+    /null/i,
+    /image omitted/i,
+    /video omitted/i,
+    /audio omitted/i,
+    /sticker omitted/i,
+    /document omitted/i,
+    /You were added/i,
+    /changed their phone number/i,
+  ];
+  if (systemPatterns.some(r => r.test(text))) return false;
+
+  // Spam check (case-insensitive exact match)
+  const lower = text.toLowerCase().replace(/[!?.]+$/, '').trim();
+  if (SPAM_PHRASES.has(lower)) return false;
+
+  return true;
+}
+
+/* ═══════════════════════════════════════════════
+   2b. APRIL MONTH FILTER FOR BOM
+   dateStr formats: DD/MM/YYYY or DD/MM/YY or M/D/YY
+   We extract the MONTH component and check == 4 (April)
+═══════════════════════════════════════════════ */
+function isAprilMessage(msg) {
+  // dateStr is always captured from the chat as-is, e.g. "3/4/25" or "03/04/2025"
+  const parts = msg.dateStr.split('/');
+  if (parts.length < 2) return false;
+
+  // WhatsApp India/UK format: DD/MM/YYYY — month is parts[1]
+  // WhatsApp US format: M/D/YY — month is parts[0]
+  // We try both and accept if either gives month 4
+  const monthA = parseInt(parts[1], 10); // DD/MM/... → parts[1] is month
+  const monthB = parseInt(parts[0], 10); // M/D/...   → parts[0] is month
+
+  return monthA === BOM_MONTH || monthB === BOM_MONTH;
+}
+
+/* ═══════════════════════════════════════════════
+   3. CONTACTS MAP — name → batch year
+   Built from jnv.csv (First Name = clean name,
+   Middle Name = year, Last Name = "JNV BHAV" ignored).
+   Sender names in WhatsApp look like:
+     "BHAVNA SHIYAL 2006 JNV BHAV"  or  "BHAVNA SHIYAL"
+   We match by checking if the sender STARTS WITH
+   any known clean name (case-insensitive).
+═══════════════════════════════════════════════ */
+const CONTACTS_MAP = {"BHAVNA SHIYAL":2006,"HIREN VYAS":2006,"CHETAN SARVAIYA":2006,"MAHESH SOLANKI":2006,"ALKA MAKWANA":2006,"MAHESH VEGAD":2006,"RAGHUVIRSINH SARVAIYA":2006,"RAVIRAJSINH VAJA":2006,"YATRA SARVAIYA":2006,"SHAILESH JANI":2006,"PAYAL MANGUKIYA":2006,"BIPIN MER":2007,"RAVI JOSHI":2007,"ANILBHAI PANDYA":2007,"RAM GOHIL":2007,"FRENA MEHTA":2007,"RANJIT PARMAR":2008,"RAJDEEPSINH GOHIL":2008,"PRAHLAD DAVE":2008,"NIRAV JANI":2008,"JIGNA BARAIYA":2008,"JIGNA LADHVA":2008,"PAYALBA GOHIL":2009,"HARESH JAMBUCHA":2009,"BHAUMIK SUTARIYA":2009,"POOJA DEVMURARI":2009,"VIBHA MARU":2010,"Dr ANILA BARAIYA":2010,"MANISHA BALAR":2010,"JIGNESH SARVAIYA":2011,"VAISHALI MAKWANA":2011,"NEHA JOSHI":2011,"HARITA GOHIL":2011,"DHRUV RAJ CHAUHAN":2012,"MAHADEEPSINH GOHIL":2012,"MEHUL HIRANI":2013,"KETAN PANDYA":2013,"NIRALI GOSWAMI":2013,"SANKET BALAR":2014,"LALITBHAI JANI":2015,"BHARGAV SIDDHPURA":2015,"RIDDHI GAUSWAMI":2015,"SANTOSH SANGADA":2015,"JANAK MANGUKIYA":2016,"GIRISH MAKWANA":2016,"PANKAJ MOR":2016,"DISHA GODHANI":2017,"JAY GOHEL":2017,"NISHANT GILATAR":2017,"FENIL VIRANI":2017,"MANASI SOLANKI":2018,"CHIRAG PARMAR":2018,"SANDIP MAKWANA":2018,"NAYAN JALELA":2018,"TUSHAR KHENI":2018,"RUTVIK KEVADIYA":2018,"AKSHARDEEP SUVAGIYA":2018,"SHREYAS VASOYA":2019,"VRUTIK PATELIYA":2019,"AKASH PALADIYA":2019,"ARYAN UMAT":2019,"URVISHA GODHANI":2020,"ARSHITA MORADIYA":2020,"PRATHAM PATEL":2020,"DHRUV NAMSHA":2020,"PARTH RAMNA":2020,"BHAVESH KALSARIYA":2021,"CHETAN CHAUHAN":2021,"DARSHANA BAJAK":2021,"GUNJAN BHITORA":2021,"JIYA VASANI":2022,"HARDIK DHALVANIYA":2022,"VIHAR SANKALIYA":2022,"UMESH PARMAR":2022,"RAJ BHAVNAGARIYA":2023,"AKSHAY LADHVA":2023,"DHAVALSINH CHAUHAN":2023,"JAYDEV GOHIL":2023,"SHITAL GOHIL":2023,"HARSHITA SARVAIYA":2023,"LAKSH CHUDASAMA":2024,"MIT GOHEL":2024,"GOPAL BARAIYA":2024,"JAYSHREE KANTARIYA":2024,"NIKHIL VELARI":2024,"KRUTI HANHAD":2025,"DHRUVIL GOSWAMI":2025,"DILIP DABHI":2025,"KULDIP KANTARIYA":2025,"MITRAJSINH GOHIL":2025,"ASMIT KHASIYA":2025,"PRIYRAJSINH GOHIL":2025,"JAYDIP JAJDA":2025,"BHAVDEEP MOBH":2025,"MEHUL BHAMMAR":2025,"VISHNA KAMALIYA":2006};
+
+// Pre-build sorted keys longest-first so "DHRUV RAJ CHAUHAN" matches before "DHRUV"
+const CONTACT_KEYS = Object.keys(CONTACTS_MAP).sort((a,b) => b.length - a.length);
+
+/**
+ * resolveContact(senderName)
+ * Returns { cleanName, year } if found in contacts map, else null.
+ * Matches case-insensitively against the START of the sender string,
+ * so "BHAVNA SHIYAL 2006 JNV BHAV" → { cleanName:"BHAVNA SHIYAL", year:2006 }
+ */
+function resolveContact(senderName) {
+  const upper = senderName.toUpperCase().trim();
+  for (const key of CONTACT_KEYS) {
+    const keyUpper = key.toUpperCase();
+    // Match if sender starts with the clean name (possibly followed by space/digits/extra)
+    if (upper === keyUpper || upper.startsWith(keyUpper + ' ') || upper.startsWith(keyUpper + ',')) {
+      return { cleanName: toTitleCase(key), year: CONTACTS_MAP[key] };
+    }
+  }
+  return null;
+}
+
+// Title-case helper: "BHAVNA SHIYAL" → "Bhavna Shiyal"
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
+}
+
+const BATCH_RE_FALLBACK = /\b(20(0[6-9]|1[0-9]|2[0-5]))\b/;
+const VALID_BATCH_MIN = 2006;
+const VALID_BATCH_MAX = 2024;
+
+let batch2025Data = null;
+
+/** Returns batch year (2006-2024) from contacts map, falls back to regex. Returns null for 2025. */
+function extractBatchYear(senderName) {
+  const contact = resolveContact(senderName);
+  if (contact) {
+    if (contact.year === 2025) return null;
+    if (contact.year >= VALID_BATCH_MIN && contact.year <= VALID_BATCH_MAX) return contact.year;
+    return null;
+  }
+  // Fallback: regex (for senders not in contacts)
+  const m = senderName.match(BATCH_RE_FALLBACK);
+  if (!m) return null;
+  const y = parseInt(m[1]);
+  if (y === 2025 || y < VALID_BATCH_MIN || y > VALID_BATCH_MAX) return null;
+  return y;
+}
+
+/** Returns true if sender belongs to batch 2025 */
+function extractIs2025(senderName) {
+  const contact = resolveContact(senderName);
+  if (contact) return contact.year === 2025;
+  return /\b2025\b/.test(senderName);
+}
+
+/**
+ * getDisplayName(senderName)
+ * Returns the clean display name — just "Bhavna Shiyal", not "BHAVNA SHIYAL 2006 JNV BHAV".
+ * Falls back to original sender name if not in contacts.
+ */
+function getDisplayName(senderName) {
+  const contact = resolveContact(senderName);
+  return contact ? contact.cleanName : senderName;
+}
+
+/* ═══════════════════════════════════════════════
+   4. COMPUTE BATCH DATA
+   For each year 2006–2024:
+   - Count messages per member
+   - Find top 3 members
+   - Compute score
+═══════════════════════════════════════════════ */
+function computeBatchData() {
+  // Reset
+  batchData = {};
+
+  // Initialize ALL batches 2006→2024
+  for (let y = VALID_BATCH_MIN; y <= VALID_BATCH_MAX; y++) {
+    batchData[y] = {
+      year:       y,
+      members:    {},   // { name: { total, valid } }
+      activeDays: new Set(),
+      validCount: 0,
+    };
+  }
+
+  // Tally APRIL-ONLY valid messages into batches (BOM scope)
+  for (const msg of bomValidMessages) {
+    const year = extractBatchYear(msg.sender);
+    if (!year) continue;
+
+    const bd = batchData[year];
+    const displayName = getDisplayName(msg.sender);  // clean name, no year/JNV suffix
+
+    if (!bd.members[displayName]) {
+      bd.members[displayName] = { total: 0, valid: 0 };
+    }
+    bd.members[displayName].valid++;
+    bd.validCount++;
+    bd.activeDays.add(msg.dateStr);
+  }
+
+  // Tally raw April totals (for "Messages" column in member table)
+  for (const msg of rawMessages) {
+    if (!isAprilMessage(msg)) continue;
+    const year = extractBatchYear(msg.sender);
+    if (!year) continue;
+    const bd = batchData[year];
+    const displayName = getDisplayName(msg.sender);
+    if (!bd.members[displayName]) {
+      bd.members[displayName] = { total: 0, valid: 0 };
+    }
+    bd.members[displayName].total++;
+  }
+
+  // ── Compute 2025 (BOM Squad) separately ──
+  batch2025Data = {
+    year: 2025, members: {}, activeDays: new Set(), validCount: 0,
+  };
+
+  for (const msg of bomValidMessages) {
+    if (!extractIs2025(msg.sender)) continue;
+    const bd = batch2025Data;
+    const displayName = getDisplayName(msg.sender);
+    if (!bd.members[displayName]) bd.members[displayName] = { total: 0, valid: 0 };
+    bd.members[displayName].valid++;
+    bd.validCount++;
+    bd.activeDays.add(msg.dateStr);
+  }
+  for (const msg of rawMessages) {
+    if (!isAprilMessage(msg) || !extractIs2025(msg.sender)) continue;
+    const displayName = getDisplayName(msg.sender);
+    if (!batch2025Data.members[displayName]) batch2025Data.members[displayName] = { total: 0, valid: 0 };
+    batch2025Data.members[displayName].total++;
+  }
+
+  const d25 = batch2025Data.activeDays.size;
+  let bonus25 = 0;
+  if (d25 >= 20) bonus25 = 50;
+  else if (d25 >= 10) bonus25 = 20;
+
+  const sorted25 = Object.entries(batch2025Data.members)
+    .sort((a,b) => b[1].valid - a[1].valid);
+
+  batch2025Data.top3 = sorted25.slice(0,3).map(([name, stats]) => ({ name, ...stats, counted: true }));
+  const counted25Valid = batch2025Data.top3.reduce((sum, m) => sum + m.valid, 0);
+
+  batch2025Data.messagePoints  = counted25Valid;
+  batch2025Data.activeDaysCount = d25;
+  batch2025Data.bonus           = bonus25;
+  batch2025Data.score           = counted25Valid + bonus25;
+  batch2025Data.allMembers = sorted25.map(([name, stats], i) => ({
+    name, ...stats, counted: i < 3,
+  }));
+
+  // Compute scores & top3 for all main batches (2006–2024)
+  for (const y in batchData) {
+    const bd = batchData[y];
+    const days = bd.activeDays.size;
+
+    // Sort all members by valid count DESC
+    const sorted = Object.entries(bd.members)
+      .sort((a, b) => b[1].valid - a[1].valid);
+
+    // Top 3 contribute to score; rest are displayed but NOT counted
+    bd.top3 = sorted.slice(0, 3).map(([name, stats]) => ({ name, ...stats, counted: true }));
+    const top3Names = new Set(bd.top3.map(m => m.name));
+
+    // Only top3 valid messages count toward score
+    const countedValid = bd.top3.reduce((sum, m) => sum + m.valid, 0);
+
+    // Bonus based on active days (from top3 only)
+    let bonus = 0;
+    if (days >= 20) bonus = 50;
+    else if (days >= 10) bonus = 20;
+
+    bd.messagePoints  = countedValid;
+    bd.activeDaysCount = days;
+    bd.bonus  = bonus;
+    bd.score  = countedValid + bonus;
+
+    // allMembers: top3 flagged counted=true, rest counted=false
+    bd.allMembers = sorted.map(([name, stats], i) => ({
+      name, ...stats,
+      counted: i < 3,
+    }));
+  }
+}
+
+/* ═══════════════════════════════════════════════
+   5. OVERVIEW STATS
+═══════════════════════════════════════════════ */
+function computeOverviewStats() {
+  senderStats = {};
+  const hourStats = new Array(24).fill(0);
+  const days = new Set();
+
+  for (const msg of rawMessages) {
+    const dn = getDisplayName(msg.sender);
+    senderStats[dn] = (senderStats[dn] || 0) + 1;
+    hourStats[msg.hour]++;
+    days.add(msg.dateStr);
+  }
+
+  return { senderStats, hourStats, days };
+}
+
+/* ═══════════════════════════════════════════════
+   UI — PAGE NAVIGATION
+═══════════════════════════════════════════════ */
+function showPage(name) {
+  document.getElementById('upload-page').style.display = 'none';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pg = document.getElementById(name + '-page');
+  if (pg) pg.classList.add('active');
+
+  // Update nav
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  if (name === 'overview') document.querySelectorAll('.nav-btn')[0]?.classList.add('active');
+  if (name === 'bom')      document.querySelectorAll('.nav-btn')[1]?.classList.add('active');
+
+  state.view = name;
+}
+
+function openBOM() {
+  showPage('bom');
+  renderBOM();
+}
+
+function openBatchDetail(batchYear) {
+  state.selectedBatch = batchData[batchYear];
+  state.prevView = 'bom';
+  showPage('detail');
+  renderDetailPage();
+}
+
+function openBatchChat() {
+  state.prevView = 'detail';
+  showPage('chat');
+  renderChatPage();
+}
+
+function goBack() {
+  showPage(state.prevView || 'bom');
+  if (state.prevView === 'bom') renderBOM();
+}
+
+function goToDetail() {
+  showPage('detail');
+}
+
+/* ═══════════════════════════════════════════════
+   UI — RENDER OVERVIEW
+═══════════════════════════════════════════════ */
+function renderOverview() {
+  const { hourStats, days } = computeOverviewStats();
+
+  const topSenders = Object.entries(senderStats)
+    .sort((a,b) => b[1]-a[1])
+    .slice(0, 10);
+
+  const maxCount = topSenders[0]?.[1] || 1;
+
+  // Stats cards
+  const totalBatches = Object.values(batchData).filter(b => b.validCount > 0).length;
+  document.getElementById('overview-stats').innerHTML = `
+    <div class="stat-card">
+      <span class="stat-icon">💬</span>
+      <div class="stat-value">${rawMessages.length.toLocaleString()}</div>
+      <div class="stat-label">Total Messages</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <div class="stat-value">${validMessages.length.toLocaleString()}</div>
+      <div class="stat-label">Valid Messages</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">👥</span>
+      <div class="stat-value">${Object.keys(senderStats).length}</div>
+      <div class="stat-label">Participants</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📅</span>
+      <div class="stat-value">${days.size}</div>
+      <div class="stat-label">Active Days</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🏫</span>
+      <div class="stat-value">${totalBatches}</div>
+      <div class="stat-label">Active Batches</div>
+    </div>
+  `;
+
+  document.getElementById('overview-subtitle').textContent =
+    `${rawMessages.length.toLocaleString()} messages · ${Object.keys(senderStats).length} participants`;
+  document.getElementById('msg-count-badge').textContent =
+    `${validMessages.length.toLocaleString()} valid`;
+
+  // Top senders
+  const sl = document.getElementById('top-senders-list');
+  sl.innerHTML = topSenders.map(([name, count], i) => `
+    <div class="sender-row">
+      <div class="sender-rank">${i+1}</div>
+      <div class="sender-avatar">${name[0]?.toUpperCase() || '?'}</div>
+      <div class="sender-info">
+        <div class="sender-name">${escHtml(name)}</div>
+        <div class="sender-count">${count.toLocaleString()} messages</div>
+      </div>
+      <div class="sender-bar-wrap">
+        <div class="sender-bar" style="width:${Math.round(count/maxCount*100)}%"></div>
+      </div>
+    </div>
+  `).join('');
+
+  // Hour chart
+  const maxH = Math.max(...hourStats, 1);
+  const hc = document.getElementById('hour-chart');
+  hc.innerHTML = hourStats.map((v, i) => `
+    <div class="hour-bar-wrap">
+      <div class="hour-bar" style="height:${Math.max(2, Math.round(v/maxH*68))}px"
+           title="${i}:00 — ${v} msgs"></div>
+      ${i % 6 === 0 ? `<div class="hour-label">${i}</div>` : '<div class="hour-label" style="opacity:0">.</div>'}
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   UI — BATCH 2025 SPOTLIGHT CARD
+   Rendered above the leaderboard in BOM page.
+   Clickable score → opens detail page for 2025.
+═══════════════════════════════════════════════ */
+function render2025Card() {
+  const b = batch2025Data;
+  if (!b) return;
+
+  const scoreHTML = b.score > 0
+    ? `<button class="squad-score-pill" onclick="openBatchDetail2025()">
+         ${b.score.toLocaleString()}
+         <small>SCORE</small>
+       </button>`
+    : `<div class="squad-score-pill zero">0<small>SCORE</small></div>`;
+
+  const membersHTML = b.top3.length
+    ? b.top3.map((m, i) => `
+        <div class="squad-member-chip">
+          <div class="chip-dot ${i===0?'':'d'+(i+1)}"></div>
+          <span>${escHtml(m.name)}</span>
+          <span class="chip-count">${m.valid}</span>
+        </div>`).join('')
+    : `<span style="color:var(--text3);font-size:12px;font-style:italic">No members found</span>`;
+
+  document.getElementById('squad-2025-card').innerHTML = `
+    <div class="squad-card">
+      <div class="squad-header">
+        <div class="squad-title">
+          🏫 Batch 2025
+          <span>BOM Squad · April Only</span>
+        </div>
+        ${scoreHTML}
+      </div>
+      <div class="squad-meta">
+        <div class="squad-meta-item">
+          <div class="smi-val">${b.messagePoints.toLocaleString()}</div>
+          <div class="smi-lbl">💬 Msg Points</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">${b.activeDaysCount}</div>
+          <div class="smi-lbl">📅 Active Days</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">+${b.bonus}</div>
+          <div class="smi-lbl">⚡ Bonus</div>
+        </div>
+        <div class="squad-meta-item">
+          <div class="smi-val">${Object.keys(b.members).length}</div>
+          <div class="smi-lbl">👥 Members</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Top Members</div>
+      <div class="squad-members">${membersHTML}</div>
+    </div>
+  `;
+}
+
+/* open detail page for batch 2025 */
+function openBatchDetail2025() {
+  state.selectedBatch = batch2025Data;
+  state.prevView = 'bom';
+  showPage('detail');
+  renderDetailPage();
+}
+
+/* ═══════════════════════════════════════════════
+   UI — RENDER BOM LEADERBOARD
+═══════════════════════════════════════════════ */
+function renderBOM() {
+  // Sort batches by score DESC, then by year
+  const sorted = Object.values(batchData)
+    .sort((a,b) => b.score - a.score || a.year - b.year);
+
+  const topBatch = sorted.find(b => b.score > 0);
+  const totalValid = bomValidMessages.length;   // April-only valid count
+  const activeBatches = sorted.filter(b => b.score > 0).length;
+
+  // April label in badge
+  document.getElementById('bom-period-badge').textContent = '📅 April Only';
+
+  // Render Batch 2025 spotlight above leaderboard
+  render2025Card();
+
+  // Stats
+  document.getElementById('bom-stats').innerHTML = `
+    <div class="stat-card">
+      <span class="stat-icon">🏫</span>
+      <div class="stat-value">${VALID_BATCH_MAX - VALID_BATCH_MIN + 1}</div>
+      <div class="stat-label">Total Batches</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🔥</span>
+      <div class="stat-value">${activeBatches}</div>
+      <div class="stat-label">Active Batches</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <div class="stat-value">${totalValid.toLocaleString()}</div>
+      <div class="stat-label">Valid Messages</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">🏆</span>
+      <div class="stat-value">${topBatch ? 'Batch ' + topBatch.year : '–'}</div>
+      <div class="stat-label">Top Batch</div>
+    </div>
+  `;
+
+  // Medal emoji by rank
+  const medals = ['🥇','🥈','🥉'];
+  const rankClass = ['rank-1','rank-2','rank-3'];
+  const rankStyle = ['r1','r2','r3'];
+
+  const lb = document.getElementById('bom-leaderboard');
+  lb.innerHTML = sorted.map((b, i) => {
+    const medal  = i < 3 ? medals[i]  : '';
+    const rc     = i < 3 ? rankClass[i] : '';
+    const rs     = i < 3 ? rankStyle[i] : 'rn';
+    const rank   = i < 3 ? medal : `#${i+1}`;
+
+    const top3HTML = b.top3.length
+      ? b.top3.map((m, mi) => `
+          <div class="bom-member">
+            <div class="bom-member-dot ${mi===0?'':'d'+(mi+1)}"></div>
+            <span>${escHtml(m.name)}</span>
+            <span class="text-mono" style="color:var(--text3);font-size:11px;margin-left:auto">${m.valid}</span>
+          </div>`).join('')
+      : `<div style="color:var(--text3);font-size:12px;font-style:italic">No messages</div>`;
+
+    const scoreBtn = b.score > 0
+      ? `<button class="bom-score-btn" onclick="openBatchDetail(${b.year})">${b.score.toLocaleString()}</button>`
+      : `<div class="bom-score-btn zero">0</div>`;
+
+    return `
+      <div class="bom-row ${rc}">
+        <div class="bom-rank ${rs}">${rank}</div>
+        <div class="bom-year">Batch ${b.year}<span>${b.activeDaysCount} days</span></div>
+        <div class="bom-members">${top3HTML}</div>
+        ${scoreBtn}
+      </div>
+    `;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   UI — RENDER BATCH DETAIL
+═══════════════════════════════════════════════ */
+function renderDetailPage() {
+  const b = state.selectedBatch;
+  if (!b) return;
+
+  document.getElementById('detail-title').textContent = `Batch ${b.year}`;
+  document.getElementById('detail-subtitle').textContent = `Score breakdown & member stats`;
+
+  // Score breakdown cards
+  document.getElementById('detail-score-panel').innerHTML = `
+    <div class="detail-score-card">
+      <div class="dsc-icon">💬</div>
+      <div class="dsc-value">${b.messagePoints.toLocaleString()}</div>
+      <div class="dsc-label">Message Points</div>
+    </div>
+    <div class="detail-score-card">
+      <div class="dsc-icon">📅</div>
+      <div class="dsc-value">${b.activeDaysCount}</div>
+      <div class="dsc-label">Active Days</div>
+    </div>
+    <div class="detail-score-card">
+      <div class="dsc-icon">⚡</div>
+      <div class="dsc-value">+${b.bonus}</div>
+      <div class="dsc-label">Bonus${b.activeDaysCount>=20?' (20d)':b.activeDaysCount>=10?' (10d)':''}</div>
+    </div>
+    <div class="detail-score-card total">
+      <div class="dsc-icon">🏆</div>
+      <div class="dsc-value">${b.score.toLocaleString()}</div>
+      <div class="dsc-label">Total Score</div>
+    </div>
+  `;
+
+  // Members table — top 3 counted (green), rest not counted (red)
+  const tbody = document.getElementById('detail-members');
+  if (b.allMembers.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--text3);padding:24px">No members detected</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = b.allMembers.map((m, i) => {
+    const counted = m.counted;
+    const rowStyle = counted ? '' : 'opacity:0.55';
+    const rankCell = counted
+      ? `<td style="color:var(--text3);font-family:var(--font-mono);font-size:12px">${i+1}</td>`
+      : `<td style="color:var(--red);font-family:var(--font-mono);font-size:12px">${i+1}</td>`;
+    const nameCell = counted
+      ? `<td style="color:var(--text);font-weight:500">${escHtml(m.name)}</td>`
+      : `<td style="color:var(--red)">${escHtml(m.name)}</td>`;
+    const validCell = counted
+      ? `<td style="color:var(--accent);font-family:var(--font-mono);font-weight:500">${m.valid.toLocaleString()}</td>`
+      : `<td style="color:var(--red);font-family:var(--font-mono)">${m.valid.toLocaleString()}</td>`;
+    const statusCell = counted
+      ? `<td><span style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(0,229,160,0.12);color:var(--accent);font-weight:600">✓ Counted</span></td>`
+      : `<td><span style="font-size:10px;padding:2px 8px;border-radius:4px;background:rgba(255,77,109,0.12);color:var(--red);font-weight:600">✗ Not Counted</span></td>`;
+    return `<tr style="${rowStyle}">${rankCell}${nameCell}<td style="color:var(--text2);font-family:var(--font-mono)">${m.total.toLocaleString()}</td>${validCell}${statusCell}</tr>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   UI — RENDER CHAT EXPLORER
+═══════════════════════════════════════════════ */
+function renderChatPage() {
+  const b = state.selectedBatch;
+  if (!b) return;
+
+  // Get member names set for fast lookup
+  const memberNames = new Set(
+    b.year === 2025
+      ? Object.keys(b.members)   // 2025 members stored by extractIs2025
+      : Object.keys(b.members)
+  );
+
+  document.getElementById('chat-title').textContent = `💬 Batch ${b.year} — Chat`;
+  document.getElementById('chat-subtitle').textContent =
+    `April messages from ${memberNames.size} members`;
+
+  // Filter messages from this batch's members — APRIL ONLY for BOM chat
+  // Members are keyed by cleanName, so resolve each sender before checking
+  const batchMsgs = rawMessages.filter(m => {
+    if (!isAprilMessage(m)) return false;
+    const dn = getDisplayName(m.sender);
+    return memberNames.has(dn);
   });
+
+  // Mark valid/invalid
+  const marked = batchMsgs.map(m => ({
+    ...m,
+    isValid: isValidMessage(m),
+  }));
+
+  const totalCount   = marked.length;
+  const validCount   = marked.filter(m => m.isValid).length;
+  const invalidCount = totalCount - validCount;
+
+  // Summary bar
+  document.getElementById('chat-summary').innerHTML = `
+    <div class="chat-stat-pill total">💬 ${totalCount.toLocaleString()} total</div>
+    <div class="chat-stat-pill valid">✅ ${validCount.toLocaleString()} valid</div>
+    <div class="chat-stat-pill invalid">❌ ${invalidCount.toLocaleString()} invalid</div>
+  `;
+
+  // Render last 200 messages for performance (especially on mobile)
+  const toRender = marked.slice(-200);
+  const colorMap = {};
+  const palette  = ['var(--accent)','var(--accent2)','var(--purple)','#ff9f43','#ff6b6b','#48dbfb'];
+  let ci = 0;
+
+  const bubblesEl = document.getElementById('chat-bubbles');
+  bubblesEl.innerHTML = toRender.map(msg => {
+    if (!colorMap[msg.sender]) {
+      colorMap[msg.sender] = palette[ci++ % palette.length];
+    }
+    const color = colorMap[msg.sender];
+    const initials = getDisplayName(msg.sender).split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const validClass = msg.isValid ? 'valid' : 'invalid';
+    const tagLabel   = msg.isValid ? '✅ valid' : '❌ invalid';
+    const tagClass   = msg.isValid ? 'v' : 'i';
+
+    return `
+      <div class="bubble-wrap">
+        <div class="bubble-avatar" style="background:linear-gradient(135deg,${color},rgba(0,0,0,0.5))">${initials}</div>
+        <div class="bubble ${validClass}">
+          <div class="bubble-sender" style="color:${color}">${escHtml(getDisplayName(msg.sender))}</div>
+          <div class="bubble-text">${escHtml(msg.content)}</div>
+          <div class="bubble-meta">
+            <span class="bubble-time">${escHtml(msg.dateStr)} ${escHtml(msg.timeStr)}</span>
+            <span class="bubble-tag ${tagClass}">${tagLabel}</span>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Scroll to bottom
+  bubblesEl.scrollTop = bubblesEl.scrollHeight;
 }
 
-function closeMobileNav(){document.querySelector(".nav-links").classList.remove("open");}
+/* ═══════════════════════════════════════════════
+   FILE UPLOAD & PROCESSING
+═══════════════════════════════════════════════ */
+function processFile(text, fileName) {
+  // Show loading
+  document.getElementById('upload-page').style.display = 'none';
+  document.getElementById('nav-tabs').style.display    = 'flex';
 
-function openLightbox(src,cap){
-  document.getElementById("lb-img").src=src;
-  document.getElementById("lb-cap").textContent=cap;
-  document.getElementById("lightbox").classList.add("open");
-  document.body.style.overflow="hidden";
+  // Step 1: Parse
+  rawMessages = parseChatFile(text);
+
+  // Step 2: Filter valid messages (precomputed once — all months)
+  validMessages = rawMessages.filter(isValidMessage);
+
+  // Step 2b: BOM uses APRIL-ONLY valid messages
+  bomValidMessages = validMessages.filter(isAprilMessage);
+
+  // Step 3: Compute batch data
+  computeBatchData();
+
+  // Step 4: Show overview
+  showPage('overview');
+  renderOverview();
+
+  // Update status
+  const statusEl = document.getElementById('file-status');
+  statusEl.textContent = `✓ ${fileName} · ${rawMessages.length.toLocaleString()} msgs`;
+  statusEl.className = 'loaded';
 }
-function closeLightbox(){
-  document.getElementById("lightbox").classList.remove("open");
-  document.body.style.overflow="";
+
+/* ═══════════════════════════════════════════════
+   DEFAULT FILE AUTO-LOADER
+   Strategy: try fetch() first (works on HTTP server).
+   If that fails (file:// protocol or CORS), show a
+   "Load default file" button on the upload screen so
+   the user can pick default_chat.txt with one tap.
+   Manual upload always overrides.
+═══════════════════════════════════════════════ */
+const DEFAULT_FILE_PATH = './default_chat.txt';
+
+async function loadDefaultChat() {
+  // Only try fetch on HTTP/HTTPS — skip entirely on file://
+  if (location.protocol === 'file:') {
+    showDefaultFilePicker();
+    return;
+  }
+
+  try {
+    const res = await fetch(DEFAULT_FILE_PATH, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    if (!text.trim()) throw new Error('Empty file');
+    processFile(text, 'Default Chat');
+  } catch (err) {
+    console.warn('Default chat not loaded via fetch:', err.message);
+    showDefaultFilePicker(); // fallback: show manual pick button
+  }
 }
-document.addEventListener("keydown",function(e){if(e.key==="Escape")closeLightbox();});
+
+/* Show a subtle "Load default_chat.txt" button on the upload page */
+function showDefaultFilePicker() {
+  const hint = document.getElementById('upload-hint');
+  if (!hint) return;
+  // Avoid duplicate buttons
+  if (document.getElementById('default-file-btn')) return;
+
+  const btn = document.createElement('button');
+  btn.id = 'default-file-btn';
+  btn.textContent = '📂 Load default_chat.txt';
+  btn.style.cssText = `
+    margin-top: 16px;
+    padding: 10px 22px;
+    border-radius: 8px;
+    border: 1px solid var(--border2);
+    background: var(--card);
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+    display: block;
+    transition: all 0.2s;
+  `;
+  btn.onmouseenter = () => { btn.style.borderColor = 'var(--accent)'; btn.style.background = 'rgba(0,229,160,0.08)'; };
+  btn.onmouseleave = () => { btn.style.borderColor = 'var(--border2)'; btn.style.background = 'var(--card)'; };
+
+  const hiddenInput = document.createElement('input');
+  hiddenInput.type = 'file';
+  hiddenInput.accept = '.txt';
+  hiddenInput.style.display = 'none';
+  hiddenInput.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => processFile(ev.target.result, 'Default Chat');
+    reader.readAsText(file, 'utf-8');
+  });
+
+  btn.addEventListener('click', () => hiddenInput.click());
+  hint.after(btn);
+  hint.after(hiddenInput);
+}
+
+window.addEventListener('DOMContentLoaded', loadDefaultChat);
+
+/* ═══════════════════════════════════════════════
+   FILE INPUT HANDLERS
+   Manual upload always overrides the default file.
+═══════════════════════════════════════════════ */
+document.getElementById('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => processFile(ev.target.result, `Uploaded: ${file.name}`);
+  reader.readAsText(file, 'utf-8');
+});
+
+// Drag & drop
+const zone = document.getElementById('upload-zone');
+
+zone.addEventListener('dragover', e => {
+  e.preventDefault();
+  zone.classList.add('drag-over');
+});
+
+zone.addEventListener('dragleave', () => {
+  zone.classList.remove('drag-over');
+});
+
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => processFile(ev.target.result, `Uploaded: ${file.name}`);
+  reader.readAsText(file, 'utf-8');
+});
+
+/* ═══════════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════════ */
+function escHtml(str) {
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;');
+}
 </script>
 </body>
 </html>
